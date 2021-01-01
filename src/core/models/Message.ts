@@ -1,3 +1,4 @@
+import { uuid } from 'utils/uuid';
 import { User } from './User';
 
 export enum MessageType {
@@ -20,6 +21,7 @@ export interface MessageProps {
 }
 
 export class Message implements MessageProps {
+  id = uuid();
   type: MessageType;
   content: string;
   user?: User;

@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "packages/core",
-    "packages/utils"
+    "src/core",
+    "src/utils",
+    "src/client"
   ],
   "scripts": {},
   "keywords": [],
