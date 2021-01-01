@@ -7,7 +7,9 @@
     "src/utils",
     "src/client"
   ],
-  "scripts": {},
+  "scripts": {
+    "build": ""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
