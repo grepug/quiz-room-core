@@ -27,7 +27,6 @@ function useQuiz(_: {}) {
     room.current.questions = questions;
 
     return () => {
-      debugger;
       room.current = undefined;
     };
   }, []);

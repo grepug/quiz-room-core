@@ -8,17 +8,19 @@ import { systemMessage as sm } from './systemMessages';
 enum QuizState {
   preparing,
   ongoing_answering,
+  ongoing_correctly_answered,
   ongoing_loading_next,
   completed,
 }
 
 export class QuizRoom extends Room {
   questions: Question[] = [];
+  correctAnswers: Answer[] = [];
 
   private curQuestionIndex = 0;
   private state = QuizState.preparing;
 
-  get curQuestion() {
+  private get curQuestion() {
     return this.questions[this.curQuestionIndex];
   }
 
@@ -34,9 +36,7 @@ export class QuizRoom extends Room {
 
     switch (type) {
       case AdminMessageType.start:
-        this.state = QuizState.ongoing_answering;
-        this.config.emitMessage(sm.quizStartMsg());
-        this.nextQuestion({ initial: true });
+        this.start();
         break;
       case AdminMessageType.show:
         this.revealCorrectAnswer();
@@ -64,6 +64,7 @@ export class QuizRoom extends Room {
       if (answer.isCorrect) {
         this.state = QuizState.ongoing_loading_next;
         this.config.emitMessage(sm.answerCorrectMsg(msg.user));
+        this.correctAnswers.push(answer);
         await sleep(500);
         await this.nextQuestion();
       }
@@ -87,7 +88,7 @@ export class QuizRoom extends Room {
 
     this.config.emitMessage(sm.loadingNextQuestionMsg());
 
-    await sleep(3000);
+    await sleep(5000);
 
     this.state = QuizState.ongoing_answering;
     this.emitNewQuestion();
@@ -95,6 +96,12 @@ export class QuizRoom extends Room {
 
   private emitNewQuestion() {
     this.config.emitMessage(sm.newQuestionMsg(this.curQuestion));
+  }
+
+  private start() {
+    this.state = QuizState.ongoing_answering;
+    this.config.emitMessage(sm.quizStartMsg());
+    this.nextQuestion({ initial: true });
   }
 
   private revealCorrectAnswer() {

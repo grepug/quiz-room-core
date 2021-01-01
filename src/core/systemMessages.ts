@@ -3,34 +3,20 @@ import { Message, MessageType } from './models/Message';
 import { Question } from './models/Question';
 
 export const systemMessage = {
-  quizStartMsg() {
-    return new Message({
-      type: MessageType.system,
-      content: 'Game started!',
-    });
-  },
-  newQuestionMsg(question: Question) {
-    return new Message({
-      type: MessageType.system,
-      content: question.title,
-    });
-  },
-  revealAnswerMsg(question: Question) {
-    return new Message({
-      type: MessageType.system,
-      content: question.answer.content,
-    });
-  },
-  answerCorrectMsg(user: User) {
-    return new Message({
-      type: MessageType.system,
-      content: `${user.name} is Correct!`,
-    });
-  },
-  loadingNextQuestionMsg() {
-    return new Message({
-      type: MessageType.system,
-      content: 'next question will show up in 5 seconds',
-    });
-  },
+  quizStartMsg: () => createSystemMessage('Game Started!'),
+  quizCompletedMsg: () => createSystemMessage('Game Completed!'),
+  newQuestionMsg: (question: Question) => createSystemMessage(question.title),
+  revealAnswerMsg: (question: Question) =>
+    createSystemMessage(question.answer.content),
+  answerCorrectMsg: (user: User) =>
+    createSystemMessage(`${user.name} is Correct!`),
+  loadingNextQuestionMsg: () =>
+    createSystemMessage('next question will show up in 5 seconds'),
 };
+
+function createSystemMessage(content: string): Message {
+  return new Message({
+    type: MessageType.system,
+    content,
+  });
+}
