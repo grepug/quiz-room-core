@@ -1,4 +1,4 @@
-import { Space, Tag } from 'antd';
+import { Typography, Tag, Row, Col, Divider } from 'antd';
 import { Message } from 'core';
 
 export function MessageItem({ msg }: { msg: Message }) {
@@ -10,10 +10,26 @@ export function MessageItem({ msg }: { msg: Message }) {
 
   return (
     <div style={{ marginBottom: 12 }}>
-      <Space>
-        <Tag {...tagProps}>{msg.user?.name ?? 'System'}</Tag>
-        <span>{msg.content}</span>
-      </Space>
+      <Row gutter={12} align="top">
+        <Col span={4}>
+          <Tag {...tagProps}>{msg.user?.name ?? 'System'}</Tag>
+        </Col>
+        <Col span={20}>
+          <Paragraph>{msg.content}</Paragraph>
+        </Col>
+      </Row>
     </div>
+  );
+}
+
+function Paragraph(props: { children: string }) {
+  const lines = props.children.split(/\n/);
+
+  return (
+    <>
+      {lines.map((l, i) => (
+        <div key={i}>{l}</div>
+      ))}
+    </>
   );
 }

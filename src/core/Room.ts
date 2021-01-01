@@ -2,17 +2,17 @@ import { User } from './models/User';
 import { Message, MessageType } from './models/Message';
 import { uuid } from 'utils/uuid';
 
+export interface RoomConfig {
+  emitMessage: (msg: Message) => void;
+  saveMessage?: boolean;
+}
+
 export class Room {
   id = uuid();
   private users: Record<string, User> = {};
   private messages: Message[] = [];
 
-  constructor(
-    protected config: {
-      emitMessage: (msg: Message) => void;
-      saveMessage?: boolean;
-    }
-  ) {}
+  constructor(protected config: RoomConfig) {}
 
   handleIncomingMessage(msg: Message) {
     switch (msg.type) {

@@ -10,9 +10,7 @@ interface AnswerProps {
 
 export class Answer implements AnswerProps {
   id = uuid();
-
   content: string;
-
   question?: Question;
   user?: User;
 

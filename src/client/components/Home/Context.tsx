@@ -17,11 +17,14 @@ function initUsers(): User[] {
 function useQuiz(_: {}) {
   const room = useRef<QuizRoom>();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [users, setUsers] = useState<User[]>(initUsers);
+  const [users] = useState<User[]>(initUsers);
 
   useEffect(() => {
     room.current = new QuizRoom({
       emitMessage: handleEmitSystemMessage,
+      SHOW_ANSWER_CORRECT_DELAY: 3000,
+      SHOW_NEXT_QUESTION_DELAY: 3000,
+      saveMessage: true,
     });
 
     room.current.questions = questions;

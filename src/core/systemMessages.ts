@@ -4,7 +4,8 @@ import { Question } from './models/Question';
 
 export const systemMessage = {
   quizStartMsg: () => createSystemMessage('Game Started!'),
-  quizCompletedMsg: () => createSystemMessage('Game Completed!'),
+  quizCompletedMsg: (resultString: string) =>
+    createSystemMessage(`Game Completed!\n${resultString}`),
   newQuestionMsg: (question: Question) => createSystemMessage(question.title),
   revealAnswerMsg: (question: Question) =>
     createSystemMessage(question.answer.content),
@@ -12,6 +13,7 @@ export const systemMessage = {
     createSystemMessage(`${user.name} is Correct!`),
   loadingNextQuestionMsg: () =>
     createSystemMessage('next question will show up in 5 seconds'),
+  loadingDontHurry: () => createSystemMessage(`I'm loading, don't hurry!!!`),
 };
 
 function createSystemMessage(content: string): Message {
