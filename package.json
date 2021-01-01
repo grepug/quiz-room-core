@@ -1,16 +1,19 @@
 {
-  "name": "quiz-room-core",
+  "name": "quiz-room",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "private": true,
+  "workspaces": [
+    "packages/core",
+    "packages/utils"
+  ],
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "socket.io": "^3.0.4"
+  },
   "devDependencies": {
-    "socket.io": "^3.0.4",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   }
