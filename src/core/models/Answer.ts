@@ -3,17 +3,17 @@ import { Question } from './Question';
 import { User } from './User';
 
 interface AnswerProps {
-  question: Question;
   content: string;
+  question?: Question;
   user?: User;
 }
 
 export class Answer implements AnswerProps {
   id = uuid();
 
-  question: Question;
   content: string;
 
+  question?: Question;
   user?: User;
 
   constructor(props: AnswerProps) {
@@ -25,6 +25,6 @@ export class Answer implements AnswerProps {
   get isCorrect() {
     if (!this.user) return true;
 
-    return this.question.answer.content === this.content.trim();
+    return this.question?.answer.content === this.content.trim();
   }
 }

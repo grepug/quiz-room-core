@@ -13,7 +13,8 @@ enum QuizState {
 }
 
 export class QuizRoom extends Room {
-  private questions: Question[] = [];
+  questions: Question[] = [];
+
   private curQuestionIndex = 0;
   private state = QuizState.preparing;
 
@@ -25,20 +26,22 @@ export class QuizRoom extends Room {
   handleDefaultMessage(msg: Message) {
     super.handleDefaultMessage(msg);
 
-    this.handleAdminMessage(msg.getAdminMessageType());
-
-    this.handleUserMessage(msg);
+    this.handleAdminMessage(msg) || this.handleUserMessage(msg);
   }
 
-  private handleAdminMessage(type?: AdminMessageType) {
+  private handleAdminMessage(msg: Message) {
+    const type = msg.getAdminMessageType();
+
     switch (type) {
-      case AdminMessageType.startQuiz:
-        this.nextQuestion();
+      case AdminMessageType.start:
+        this.state = QuizState.ongoing_answering;
+        this.config.emitMessage(sm.quizStartMsg());
+        this.nextQuestion({ initial: true });
         break;
-      case AdminMessageType.revealAnswer:
+      case AdminMessageType.show:
         this.revealCorrectAnswer();
         break;
-      case AdminMessageType.stopQuiz:
+      case AdminMessageType.stop:
         this.complete();
         break;
       default:
@@ -53,6 +56,7 @@ export class QuizRoom extends Room {
 
     if (this.state === QuizState.ongoing_answering) {
       const answer = new Answer({
+        user: msg.user,
         question: this.curQuestion,
         content: msg.content,
       });
@@ -67,7 +71,7 @@ export class QuizRoom extends Room {
     }
   }
 
-  private async nextQuestion() {
+  private async nextQuestion(opts?: { initial?: boolean }) {
     const questionCount = this.questions.length;
     // 最后一道题了
     if (this.curQuestionIndex === questionCount - 1) {
@@ -77,7 +81,7 @@ export class QuizRoom extends Room {
     }
 
     // 非第一道
-    if (this.curQuestionIndex > 0) {
+    if (!opts?.initial) {
       this.curQuestionIndex += 1;
     }
 
@@ -85,6 +89,7 @@ export class QuizRoom extends Room {
 
     await sleep(3000);
 
+    this.state = QuizState.ongoing_answering;
     this.emitNewQuestion();
   }
 

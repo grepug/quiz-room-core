@@ -44,7 +44,13 @@ export function MockUserInput(props: {
 
   return (
     <Space>
-      <span>{props.user.name}</span>
+      <span
+        style={{
+          color: props.user.isAdmin ? 'red' : '',
+        }}
+      >
+        {props.user.name}
+      </span>
       <Input
         style={{ width: 300 }}
         value={value}

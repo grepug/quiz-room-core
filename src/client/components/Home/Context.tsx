@@ -2,10 +2,11 @@ import { createMyContext } from 'utils/index';
 import { QuizRoom, Message, User, Role } from 'core';
 import { useEffect, useRef, useState } from 'react';
 import { MessageType } from 'core';
+import { questions } from './data/questions';
 
 function initUsers(): User[] {
-  const users = [1, 2, 3, 4, 5, 6, 7, 8].map(
-    (el) => new User({ name: `user-${el}` })
+  const users = [...Array(18)].map(
+    (_, i) => new User({ name: `user-${i + 1}` })
   );
 
   users[0].role = Role.admin;
@@ -23,7 +24,10 @@ function useQuiz(_: {}) {
       emitMessage: handleEmitSystemMessage,
     });
 
+    room.current.questions = questions;
+
     return () => {
+      debugger;
       room.current = undefined;
     };
   }, []);

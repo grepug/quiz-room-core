@@ -9,9 +9,9 @@ export enum MessageType {
 }
 
 export enum AdminMessageType {
-  startQuiz = 'startQuiz',
-  revealAnswer = 'revealAnswer',
-  stopQuiz = 'stopQuiz',
+  start = 'start',
+  show = 'show',
+  stop = 'stop',
 }
 
 export interface MessageProps {

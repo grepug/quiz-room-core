@@ -3,6 +3,12 @@ import { Message, MessageType } from './models/Message';
 import { Question } from './models/Question';
 
 export const systemMessage = {
+  quizStartMsg() {
+    return new Message({
+      type: MessageType.system,
+      content: 'Game started!',
+    });
+  },
   newQuestionMsg(question: Question) {
     return new Message({
       type: MessageType.system,
