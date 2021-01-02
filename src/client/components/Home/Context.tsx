@@ -1,4 +1,4 @@
-import { createMyContext } from 'utils/index';
+import { createMyContext } from 'quiz-room-utils/createMyContext';
 import { QuizRoom, Message, User, Role } from 'core';
 import { useEffect, useRef, useState } from 'react';
 import { MessageType } from 'core';

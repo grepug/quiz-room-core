@@ -5,7 +5,8 @@
   "workspaces": [
     "src/core",
     "src/utils",
-    "src/client"
+    "src/client",
+    "src/network"
   ],
   "scripts": {
     "build": ""
@@ -13,9 +14,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "socket.io": "^3.0.4"
-  },
   "devDependencies": {
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"

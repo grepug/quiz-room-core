@@ -1,4 +1,4 @@
-import { sleep } from 'utils/sleep';
+import { sleep } from 'quiz-room-utils';
 import { Answer } from './models/Answer';
 import { AdminMessageType, Message } from './models/Message';
 import { Question } from './models/Question';

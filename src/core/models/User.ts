@@ -1,4 +1,4 @@
-import { uuid } from 'utils/uuid';
+import { uuid } from 'quiz-room-utils';
 import { Answer } from './Answer';
 
 export enum Role {
@@ -6,7 +6,13 @@ export enum Role {
   admin,
 }
 
-export class User {
+export interface UserProps {
+  id: string;
+  name: string;
+  role: Role;
+}
+
+export class User implements UserProps {
   id = uuid();
   name = '';
   answers: Answer[] = [];
@@ -22,5 +28,13 @@ export class User {
 
   get isAdmin() {
     return this.role === Role.admin;
+  }
+
+  toJSON(): UserProps {
+    return {
+      id: this.id,
+      name: this.name,
+      role: this.role,
+    };
   }
 }

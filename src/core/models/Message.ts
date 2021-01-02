@@ -1,5 +1,5 @@
-import { uuid } from 'utils/uuid';
-import { User } from './User';
+import { uuid } from 'quiz-room-utils';
+import { User, UserProps } from './User';
 
 export enum MessageType {
   join = 'join',
@@ -17,7 +17,8 @@ export enum AdminMessageType {
 export interface MessageProps {
   type: MessageType;
   content: string;
-  user?: User;
+  id?: string;
+  user?: UserProps;
 }
 
 export class Message implements MessageProps {
@@ -29,7 +30,7 @@ export class Message implements MessageProps {
   constructor(props: MessageProps) {
     this.type = props.type;
     this.content = props.content;
-    this.user = props.user;
+    this.user = new User(props.user);
   }
 
   get isSystem() {
@@ -43,5 +44,14 @@ export class Message implements MessageProps {
     if (AdminMessageType[content] == null) return undefined;
 
     return content;
+  }
+
+  toJSON(): MessageProps {
+    return {
+      id: this.id,
+      type: this.type,
+      content: this.content,
+      user: this.user,
+    };
   }
 }

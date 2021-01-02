@@ -1,9 +1,10 @@
 import { User } from './models/User';
 import { Message, MessageType } from './models/Message';
-import { uuid } from 'utils/uuid';
+import { uuid } from 'quiz-room-utils';
 
 export interface RoomConfig {
   emitMessage: (msg: Message) => void;
+  onAddUser?: (user: User) => void;
   saveMessage?: boolean;
 }
 
@@ -39,6 +40,7 @@ export class Room {
 
     if (!this.users[user.id]) {
       this.users[user.id] = user;
+      this.config.onAddUser?.(user);
     }
 
     return user;

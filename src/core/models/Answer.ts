@@ -1,4 +1,4 @@
-import { uuid } from 'utils/uuid';
+import { uuid } from 'quiz-room-utils';
 import { Question } from './Question';
 import { User } from './User';
 

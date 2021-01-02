@@ -1,4 +1,4 @@
-import { uuid } from 'utils/uuid';
+import { uuid } from 'quiz-room-utils';
 import { Answer } from './Answer';
 
 interface QuestionProps {
