@@ -1,8 +1,10 @@
-import { Server } from 'ws';
+import WebSocket, { Server } from 'ws';
 import { Message, QuizRoom } from 'quiz-room-core';
 const server = new Server({ port: 5200 });
 
 let room: QuizRoom;
+
+let storedWs: Record<string, WebSocket> = {};
 
 server.on('connection', function (ws) {
   if (!room) {
@@ -10,6 +12,9 @@ server.on('connection', function (ws) {
       emitMessage: handleEmitMessage,
       SHOW_ANSWER_CORRECT_DELAY: 3000,
       SHOW_NEXT_QUESTION_DELAY: 3000,
+      onAddUser: (user) => {
+        storedWs[user.id] = ws;
+      },
     });
   }
 
@@ -18,9 +23,10 @@ server.on('connection', function (ws) {
 
     try {
       const messageString = JSON.stringify(message);
-      console.log(messageString);
 
-      ws.send(messageString);
+      console.log('storedWs', storedWs);
+
+      Object.values(storedWs).forEach((ws) => ws.send(messageString));
     } catch {
       console.log('msg error');
     }

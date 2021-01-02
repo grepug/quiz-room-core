@@ -67,7 +67,7 @@ export class QuizRoom extends Room {
       const answer = new Answer({
         user: msg.user,
         question: this.curQuestion,
-        content: msg.content.trim(),
+        content: msg.content?.trim() ?? '',
       });
 
       if (answer.isCorrect) {

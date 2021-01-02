@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useContext } from './Context';
 import { MessageItem } from './MessageItem';
+import { Message } from 'quiz-room-core';
 
-export function MessageView() {
-  const ctx = useContext()!;
+export function MessageView({ messages }: { messages: Message[] }) {
   const ref = useRef<HTMLDivElement | null>();
 
   useEffect(() => {
@@ -11,7 +11,7 @@ export function MessageView() {
       behavior: 'smooth',
       top: ref.current.scrollHeight,
     });
-  }, [ctx.messages]);
+  }, [messages]);
 
   return (
     <div
@@ -24,7 +24,7 @@ export function MessageView() {
         overflow: 'auto',
       }}
     >
-      {ctx.messages.map((el) => (
+      {messages.map((el) => (
         <MessageItem key={el.id} msg={el} />
       ))}
     </div>

@@ -1,4 +1,4 @@
-import { Typography, Tag, Row, Col, Divider } from 'antd';
+import { Tag, Row, Col } from 'antd';
 import { Message } from 'core';
 
 export function MessageItem({ msg }: { msg: Message }) {

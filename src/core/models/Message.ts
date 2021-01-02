@@ -6,6 +6,7 @@ export enum MessageType {
   userJoin = 'userJoin',
   default = 'default',
   system = 'system',
+  userJoined = 'userJoined',
 }
 
 export enum AdminMessageType {
@@ -16,7 +17,7 @@ export enum AdminMessageType {
 
 export interface MessageProps {
   type: MessageType;
-  content: string;
+  content?: string;
   id?: string;
   user?: UserProps;
 }
@@ -24,7 +25,7 @@ export interface MessageProps {
 export class Message implements MessageProps {
   id = uuid();
   type: MessageType;
-  content: string;
+  content?: string;
   user?: User;
 
   constructor(props: MessageProps) {

@@ -65,7 +65,10 @@ function useQuiz(_: {}) {
   };
 }
 
-export const { Provider, useContext } = createMyContext<
-  Parameters<typeof useQuiz>[0],
-  ReturnType<typeof useQuiz>
->(useQuiz);
+export const {
+  Provider,
+  useContext,
+  Context: { Consumer },
+} = createMyContext<Parameters<typeof useQuiz>[0], ReturnType<typeof useQuiz>>(
+  useQuiz
+);

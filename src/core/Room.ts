@@ -41,6 +41,10 @@ export class Room {
     if (!this.users[user.id]) {
       this.users[user.id] = user;
       this.config.onAddUser?.(user);
+
+      this.config.emitMessage(
+        new Message({ type: MessageType.userJoined, user })
+      );
     }
 
     return user;
