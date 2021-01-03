@@ -31,7 +31,10 @@ export class Message implements MessageProps {
   constructor(props: MessageProps) {
     this.type = props.type;
     this.content = props.content;
-    this.user = new User(props.user);
+
+    if (props.user) {
+      this.user = new User(props.user);
+    }
   }
 
   get isSystem() {
