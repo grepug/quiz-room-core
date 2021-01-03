@@ -1,3 +1,4 @@
+import { TestLayout } from 'components/Layout/TestLayout';
 import { WSTestContainer } from 'components/WSTest';
 import { useEffect, useState } from 'react';
 
@@ -12,5 +13,9 @@ export default function WSTest() {
 
   if (!isClient) return null;
 
-  return <WSTestContainer />;
+  return (
+    <TestLayout>
+      <WSTestContainer />
+    </TestLayout>
+  );
 }
