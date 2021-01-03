@@ -36,11 +36,11 @@ function WSTest() {
   }
 
   return (
-    <Row gutter={20}>
-      <Col span={8}>
+    <Row gutter={12}>
+      <Col span={18}>
         <MessageView messages={ctx.messages} />
       </Col>
-      <Col span={16}>
+      <Col span={6}>
         <MockUserInput user={ctx.user} onSendMessage={ctx.sendMessage} />
       </Col>
     </Row>

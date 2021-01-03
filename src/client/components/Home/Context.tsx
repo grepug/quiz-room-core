@@ -2,7 +2,7 @@ import { createMyContext } from 'quiz-room-utils/createMyContext';
 import { QuizRoom, Message, User, Role } from 'core';
 import { useEffect, useRef, useState } from 'react';
 import { MessageType } from 'core';
-import { questions } from './data/questions';
+import { questions } from 'quiz-room-core/data/questions';
 
 function initUsers(): User[] {
   const users = [...Array(18)].map(
@@ -21,13 +21,12 @@ function useQuiz(_: {}) {
 
   useEffect(() => {
     room.current = new QuizRoom({
+      questions,
       emitMessage: handleEmitSystemMessage,
       SHOW_ANSWER_CORRECT_DELAY: 3000,
       SHOW_NEXT_QUESTION_DELAY: 3000,
       saveMessage: true,
     });
-
-    room.current.questions = questions;
 
     return () => {
       room.current = undefined;

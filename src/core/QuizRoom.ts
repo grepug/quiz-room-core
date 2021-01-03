@@ -14,22 +14,22 @@ enum QuizState {
 }
 
 interface QuizRoomConfig extends RoomConfig {
+  questions: Question[];
   SHOW_ANSWER_CORRECT_DELAY: number;
   SHOW_NEXT_QUESTION_DELAY: number;
 }
 
 export class QuizRoom extends Room {
-  questions: Question[] = [];
   correctAnswers: Answer[] = [];
 
   private curQuestionIndex = 0;
   private state = QuizState.preparing;
 
   private get curQuestion() {
-    return this.questions[this.curQuestionIndex];
+    return this.config.questions[this.curQuestionIndex];
   }
 
-  constructor(protected config: QuizRoomConfig) {
+  constructor(public config: QuizRoomConfig) {
     super(config);
   }
 
@@ -89,7 +89,7 @@ export class QuizRoom extends Room {
   }
 
   private async nextQuestion(opts?: { initial?: boolean }) {
-    const questionCount = this.questions.length;
+    const questionCount = this.config.questions.length;
     // 最后一道题了
     if (this.curQuestionIndex === questionCount - 1) {
       this.complete();

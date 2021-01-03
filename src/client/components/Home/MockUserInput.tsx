@@ -18,7 +18,7 @@ export function MockUserInput(props: {
         {props.user.name}
       </span>
       <Input
-        style={{ width: 300 }}
+        style={{ width: 100 }}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onPressEnter={() => {

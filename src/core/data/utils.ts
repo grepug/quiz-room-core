@@ -1,4 +1,4 @@
-import { Question, Answer } from 'core';
+import { Question, Answer } from '..';
 
 export function convertCSVToQuestions(csvString: string): Question[] {
   return csvString

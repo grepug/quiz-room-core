@@ -8,11 +8,13 @@ export function MessageItem({ msg }: { msg: Message }) {
     ? { color: 'red' }
     : undefined;
 
+  const name = msg.isSystem ? 'System' : msg.user?.name;
+
   return (
     <div style={{ marginBottom: 12 }}>
       <Row gutter={12} align="top">
         <Col span={4}>
-          <Tag {...tagProps}>{msg.user?.name ?? 'System'}</Tag>
+          <Tag {...tagProps}>{name}</Tag>
         </Col>
         <Col span={20}>
           <Paragraph>{msg.content}</Paragraph>
@@ -22,12 +24,12 @@ export function MessageItem({ msg }: { msg: Message }) {
   );
 }
 
-function Paragraph(props: { children: string }) {
-  const lines = props.children.split(/\n/);
+function Paragraph(props: { children?: string }) {
+  const lines = props.children?.split(/\n/);
 
   return (
     <>
-      {lines.map((l, i) => (
+      {lines?.map((l, i) => (
         <div key={i}>{l}</div>
       ))}
     </>

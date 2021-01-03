@@ -1,54 +1,70 @@
 import { createMyContext } from 'quiz-room-utils/createMyContext';
 import { Message, MessageType, User, Role } from 'quiz-room-core';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { message } from 'antd';
 
 function useWSTest(_: {}) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const tmpUserName = useRef<string>();
   const [user, setUser] = useState<User>();
-  const ws = useRef(new window.WebSocket('ws://localhost:5200'));
+  const ws = useRef<WebSocket>();
 
-  useEffect(() => {
-    ws.current.addEventListener('message', handleMessage);
+  function handleMessage(event: MessageEvent<any>) {
+    const message = new Message(JSON.parse(event.data));
 
-    return () => {
-      ws.current.removeEventListener('message', handleMessage);
-    };
+    console.log('userJoined', message.user?.name);
 
-    function handleMessage(event: MessageEvent<any>) {
-      const message = new Message(JSON.parse(event.data));
-
-      switch (message.type) {
-        case MessageType.userJoined:
-          if (tmpUserName.current === message.user?.name) {
-            setUser(message.user);
-          }
-          break;
-        case MessageType.default:
-        case MessageType.system:
-          setMessages((msgs) => msgs.concat(message));
-          break;
-      }
+    switch (message.type) {
+      case MessageType.userJoined:
+        if (tmpUserName.current === message.user?.name) {
+          setUser(message.user);
+        }
+        break;
+      case MessageType.default:
+      case MessageType.system:
+        setMessages((msgs) => msgs.concat(message));
+        break;
     }
-  }, []);
+  }
 
   function join(name: string, role = Role.user) {
-    const user = new User({ name, role });
+    let connection = getConnection();
+    ws.current = connection;
 
-    tmpUserName.current = user.name;
+    connection.onmessage = handleMessage;
 
-    sendMessage(
-      new Message({
-        type: MessageType.join,
-        content: '',
-        user,
-      })
-    );
+    connection.onopen = () => {
+      const user = new User({ name, role });
+
+      tmpUserName.current = user.name;
+
+      sendMessage(
+        new Message({
+          type: MessageType.join,
+          content: '',
+          user,
+        })
+      );
+
+      connection.onopen = null;
+    };
+
+    connection.onclose = () => {
+      message.error('You are offline, reconnecting...');
+
+      setTimeout(() => {
+        connection = getConnection();
+      }, 3000);
+    };
+
+    connection.onerror = () => {
+      message.error('cannot establish connection!');
+    };
   }
 
   function sendMessage(message: Message) {
-    ws.current.send(JSON.stringify(message));
+    ws.current?.send(JSON.stringify(message));
   }
 
   return {
@@ -68,3 +84,7 @@ export const {
   Parameters<typeof useWSTest>[0],
   ReturnType<typeof useWSTest>
 >(useWSTest);
+
+function getConnection() {
+  return new window.WebSocket('ws://localhost:5200');
+}

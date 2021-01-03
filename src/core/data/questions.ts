@@ -1,4 +1,4 @@
-import { convertCSVToQuestions } from '../utils';
+import { convertCSVToQuestions } from './utils';
 
 const csvString = `
 "咖啡的故乡是哪里?A.亚洲 B.美洲 C.大洋洲 D.非洲",D,,,,,,,,,,,,,,,,,,,,,

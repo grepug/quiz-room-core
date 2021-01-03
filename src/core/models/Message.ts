@@ -35,7 +35,7 @@ export class Message implements MessageProps {
   }
 
   get isSystem() {
-    return this.user == null;
+    return this.type === MessageType.system;
   }
 
   getAdminMessageType() {
