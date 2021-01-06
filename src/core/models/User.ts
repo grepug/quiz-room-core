@@ -18,7 +18,7 @@ export class User implements UserProps {
   answers: Answer[] = [];
   role = Role.user;
 
-  constructor(props?: Partial<User>) {
+  constructor(props?: Partial<UserProps>) {
     Object.assign(this, props);
   }
 
@@ -28,6 +28,10 @@ export class User implements UserProps {
 
   get isAdmin() {
     return this.role === Role.admin;
+  }
+
+  isEqual(user?: User) {
+    return user?.id === this.id;
   }
 
   toJSON(): UserProps {

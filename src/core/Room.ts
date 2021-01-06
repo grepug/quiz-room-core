@@ -26,6 +26,15 @@ export class Room {
     }
   }
 
+  getRestoreMessages() {
+    if (!this.messages.length) return;
+
+    return new Message({
+      type: MessageType.restoreMessages,
+      content: JSON.stringify(this.messages),
+    });
+  }
+
   protected handleDefaultMessage(msg: Message) {
     this.config.emitMessage(msg);
 

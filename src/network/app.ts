@@ -7,7 +7,7 @@ import {
   MessageType,
 } from 'quiz-room-core';
 
-const server = new Server({ port: 5200 });
+const server = new Server({ port: 5200, host: '0.0.0.0' });
 
 let room: QuizRoom;
 
@@ -20,6 +20,7 @@ server.on('connection', function (ws) {
       emitMessage: handleEmitMessage,
       SHOW_ANSWER_CORRECT_DELAY: 3000,
       SHOW_NEXT_QUESTION_DELAY: 3000,
+      saveMessage: true,
     });
   }
 
@@ -28,9 +29,15 @@ server.on('connection', function (ws) {
   function handleAddUser(user: User) {
     storedWs[user.name] = ws;
     console.log('storedWs', Object.keys(storedWs));
+
+    const restoreMessages = room.getRestoreMessages();
+
+    if (restoreMessages) {
+      handleEmitMessage(restoreMessages, user);
+    }
   }
 
-  function handleEmitMessage(message: Message) {
+  function handleEmitMessage(message: Message, user?: User) {
     if (message.type === MessageType.system) {
       console.log('message', message);
     }
@@ -38,7 +45,12 @@ server.on('connection', function (ws) {
     try {
       const messageString = JSON.stringify(message);
 
-      Object.values(storedWs).forEach((ws) => ws.send(messageString));
+      if (user) {
+        const ws = storedWs[user.name];
+        ws.send(messageString);
+      } else {
+        Object.values(storedWs).forEach((ws) => ws.send(messageString));
+      }
     } catch {
       console.log('msg error');
     }

@@ -7,6 +7,7 @@ export enum MessageType {
   default = 'default',
   system = 'system',
   userJoined = 'userJoined',
+  restoreMessages = 'restoreMessages',
 }
 
 export enum AdminMessageType {
@@ -20,6 +21,7 @@ export interface MessageProps {
   content?: string;
   id?: string;
   user?: UserProps;
+  imageURL?: string;
 }
 
 export class Message implements MessageProps {
@@ -27,6 +29,7 @@ export class Message implements MessageProps {
   type: MessageType;
   content?: string;
   user?: User;
+  imageURL?: string;
 
   constructor(props: MessageProps) {
     this.type = props.type;
@@ -39,6 +42,10 @@ export class Message implements MessageProps {
 
   get isSystem() {
     return this.type === MessageType.system;
+  }
+
+  isEqual(message?: Message) {
+    return message?.id === this.id;
   }
 
   getAdminMessageType() {

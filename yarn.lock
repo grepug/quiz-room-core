@@ -2034,6 +2034,11 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+framework7-icons@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/framework7-icons/-/framework7-icons-3.0.1.tgz#2fdb558c3c0755a97fccdd3412dda05ed1d50a27"
+  integrity sha512-nb+4T//4gyWHUE85szKUm2JlMe/yA1ACW73qzF1EI76r2vkeaKOQ36P8/nwrmUQ2bKyojGQ2gVF0ar7XkaKiog==
+
 framework7-react@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/framework7-react/-/framework7-react-6.0.1.tgz#e27404ec5e3b03f7c9545b9e6770052be3cccea7"
