@@ -45,6 +45,8 @@ export class QuizRoom extends Room {
 
     switch (type) {
       case AdminMessageType.start:
+        console.log('started!');
+
         this.start();
         break;
       case AdminMessageType.show:
@@ -75,7 +77,9 @@ export class QuizRoom extends Room {
           this.state = QuizState.ongoing_correctly_answered;
           // 当有人答对，延迟提示答案正确
           await this.sleepAndEnsureState(this.config.SHOW_ANSWER_CORRECT_DELAY);
-          this.config.emitMessage(sm.answerCorrectMsg(msg.user));
+          this.config.emitMessage(
+            sm.answerCorrectMsg(msg.user, this.curQuestionIndex)
+          );
           this.state = QuizState.ongoing_loading_next;
           this.correctAnswers.push(answer);
           await this.sleepAndEnsureState(500);
@@ -110,7 +114,9 @@ export class QuizRoom extends Room {
   }
 
   private emitNewQuestion() {
-    this.config.emitMessage(sm.newQuestionMsg(this.curQuestion));
+    this.config.emitMessage(
+      sm.newQuestionMsg(this.curQuestion, this.curQuestionIndex)
+    );
   }
 
   private start() {

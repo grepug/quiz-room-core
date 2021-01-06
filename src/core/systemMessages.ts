@@ -5,12 +5,13 @@ import { Question } from './models/Question';
 export const systemMessage = {
   quizStartMsg: () => createSystemMessage('Game Started!'),
   quizCompletedMsg: (resultString: string) =>
-    createSystemMessage(`Game Completed!\n${resultString}`),
-  newQuestionMsg: (question: Question) => createSystemMessage(question.title),
+    createSystemMessage(`Game Completed!\nResult:\n${resultString}`),
+  newQuestionMsg: (question: Question, index: number) =>
+    createSystemMessage(`Q${index + 1}: ${question.title}`),
   revealAnswerMsg: (question: Question) =>
     createSystemMessage(question.answer.content),
-  answerCorrectMsg: (user: User) =>
-    createSystemMessage(`${user.name} is Correct!`),
+  answerCorrectMsg: (user: User, index: number) =>
+    createSystemMessage(`Q${index + 1}: ${user.name} is Correct!`),
   loadingNextQuestionMsg: () =>
     createSystemMessage('next question will show up in 5 seconds'),
   loadingDontHurry: () => createSystemMessage(`I'm loading, don't hurry!!!`),

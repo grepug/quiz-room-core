@@ -9,7 +9,8 @@
     "src/network"
   ],
   "scripts": {
-    "build": ""
+    "dev": "npm run dev --prefix ./src/client",
+    "serve": "npm start --prefix ./src/network"
   },
   "keywords": [],
   "author": "",

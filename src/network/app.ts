@@ -23,17 +23,14 @@ server.on('connection', function (ws) {
     });
   }
 
-  console.log('storedWs', Object.keys(storedWs));
-
   room.config.onAddUser = handleAddUser;
 
   function handleAddUser(user: User) {
     storedWs[user.name] = ws;
+    console.log('storedWs', Object.keys(storedWs));
   }
 
   function handleEmitMessage(message: Message) {
-    if (!message.user) return;
-
     if (message.type === MessageType.system) {
       console.log('message', message);
     }
