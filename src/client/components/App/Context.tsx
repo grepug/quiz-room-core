@@ -1,5 +1,5 @@
 import { createMyContext } from 'quiz-room-utils/createMyContext';
-import { Message, MessageType, User, Role } from 'quiz-room-core';
+import { Message, MessageType, User, Role, MessageProps } from 'quiz-room-core';
 import { useRef, useState } from 'react';
 import { message } from 'antd';
 import { QuizMessage } from './models/QuizMessage';
@@ -24,7 +24,9 @@ function useApp(_: {}) {
         }
         break;
       case MessageType.restoreMessages:
-        const messages: Message[] = JSON.parse(message.content!);
+        const messagesProps: MessageProps[] = JSON.parse(message.content!);
+        const messages = messagesProps.map(Message.fromJSON);
+
         const quizMessages = messages.map((el) => new QuizMessage(el));
         linkQuizMessages(quizMessages);
 

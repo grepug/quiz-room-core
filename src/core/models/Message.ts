@@ -31,6 +31,16 @@ export class Message implements MessageProps {
   user?: User;
   imageURL?: string;
 
+  static fromJSON({ user, ...props }: MessageProps): Message {
+    let message = new Message(props);
+
+    if (user) {
+      message.user = new User(user);
+    }
+
+    return message;
+  }
+
   constructor(props: MessageProps) {
     this.type = props.type;
     this.content = props.content;
