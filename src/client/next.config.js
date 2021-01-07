@@ -1,4 +1,8 @@
-const nextConfig = {};
+const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+};
 
 const withTM = require('next-transpile-modules')([
   '../core',

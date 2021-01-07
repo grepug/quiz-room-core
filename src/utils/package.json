@@ -1,7 +1,10 @@
 {
   "name": "quiz-room-utils",
   "version": "1.0.0",
-  "scripts": {},
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc --watch"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"

@@ -1,4 +1,3 @@
-import { Role } from 'core';
 import {
   Page,
   Navbar,
@@ -7,7 +6,7 @@ import {
   Messagebar,
   Messages,
 } from 'framework7-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useContext, Provider } from './Context';
 
 export default function () {
@@ -58,16 +57,6 @@ function MyPage() {
 
 function MessageList() {
   const ctx = useContext()!;
-
-  useEffect(() => {
-    if (!ctx.user) {
-      let name = prompt('Input Your Name');
-
-      if (name?.trim()) {
-        ctx.join(name);
-      }
-    }
-  }, [ctx.user]);
 
   if (!ctx.user) {
     return null;

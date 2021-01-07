@@ -1,17 +1,47 @@
 import { createMyContext } from 'quiz-room-utils/createMyContext';
 import { Message, MessageType, User, Role, MessageProps } from 'quiz-room-core';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { message } from 'antd';
 import { QuizMessage } from './models/QuizMessage';
 
 const admins = ['kai', 'qq'];
+const LS_ME_INFO_KEY = 'me_info';
+const isClient = () => typeof window !== 'undefined';
+
+function initUser(): User | undefined {
+  if (isClient()) {
+    const ls = localStorage.getItem(LS_ME_INFO_KEY);
+
+    if (ls) {
+      return JSON.parse(ls);
+    }
+  }
+}
 
 function useApp(_: {}) {
   const [messages, setMessages] = useState<QuizMessage[]>([]);
 
-  const tmpUserName = useRef<string>();
+  const tmpUserId = useRef<string>();
   const [user, setUser] = useState<User>();
   const ws = useRef<WebSocket>();
+
+  useEffect(() => {
+    if (isClient()) {
+      if (user) {
+        localStorage.setItem(LS_ME_INFO_KEY, JSON.stringify(user));
+      } else {
+        const user = initUser() ?? new User();
+        const userName = prompt('Input Your Name', user?.name)?.trim();
+
+        if (userName) {
+          user.name = userName;
+          user.role = admins.includes(userName) ? Role.admin : Role.user;
+
+          join(user);
+        }
+      }
+    }
+  }, [user]);
 
   function handleMessage(event: MessageEvent<any>) {
     const rawData: string = event.data;
@@ -34,7 +64,7 @@ function useApp(_: {}) {
       case MessageType.userJoined:
         const isUserJoined = message.type === MessageType.userJoined;
         const isMeJoined =
-          isUserJoined && tmpUserName.current === message.user?.name;
+          isUserJoined && tmpUserId.current === message.user?.id;
 
         if (isMeJoined) {
           setUser(message.user);
@@ -61,18 +91,14 @@ function useApp(_: {}) {
     }
   }
 
-  function join(name: string) {
+  function join(user: User) {
     let connection = getConnection();
     ws.current = connection;
 
     connection.onmessage = handleMessage;
 
     connection.onopen = () => {
-      const role = admins.includes(name) ? Role.admin : Role.user;
-
-      const user = new User({ name, role });
-
-      tmpUserName.current = user.name;
+      tmpUserId.current = user.id;
 
       sendMessage(
         new Message({
@@ -102,7 +128,6 @@ function useApp(_: {}) {
     if (typeof msg === 'string') {
       msg = new Message({ content: msg, type: MessageType.default, user });
     }
-
     ws.current?.send(JSON.stringify(msg));
   }
 

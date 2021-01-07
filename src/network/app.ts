@@ -1,11 +1,5 @@
 import WebSocket, { Server } from 'ws';
-import {
-  Message,
-  QuizRoom,
-  User,
-  mockQuestions,
-  MessageType,
-} from 'quiz-room-core';
+import { Message, QuizRoom, User, mockQuestions } from 'quiz-room-core';
 
 const server = new Server({ port: 5200, host: '0.0.0.0' });
 
@@ -24,10 +18,10 @@ server.on('connection', function (ws) {
     });
   }
 
-  room.config.onAddUser = handleAddUser;
+  room.config.onUserJoin = handleAddUser;
 
   function handleAddUser(user: User) {
-    storedWs[user.name] = ws;
+    storedWs[user.id] = ws;
     console.log('storedWs', Object.keys(storedWs));
 
     const restoreMessages = room.getRestoreMessages();
@@ -42,7 +36,8 @@ server.on('connection', function (ws) {
       const messageString = JSON.stringify(message);
 
       if (user) {
-        const ws = storedWs[user.name];
+        const ws = storedWs[user.id];
+
         ws.send(messageString);
       } else {
         Object.values(storedWs).forEach((ws) => ws.send(messageString));

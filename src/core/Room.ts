@@ -4,7 +4,7 @@ import { uuid } from 'quiz-room-utils';
 
 export interface RoomConfig {
   emitMessage: (msg: Message) => void;
-  onAddUser?: (user: User) => void;
+  onUserJoin?: (user: User) => void;
   saveMessage?: boolean;
 }
 
@@ -40,8 +40,6 @@ export class Room {
 
     if (this.config.saveMessage) {
       if (msg.shouldSave()) {
-        console.log('saved', msg);
-
         this.messages.push(msg);
       }
     }
@@ -55,12 +53,11 @@ export class Room {
   private addUser(user?: User) {
     if (!user) return;
 
-    if (!this.users[user.id]) {
-      this.users[user.id] = user;
-      this.config.onAddUser?.(user);
+    this.config.onUserJoin?.(user);
 
-      this.emitMessage(new Message({ type: MessageType.userJoined, user }));
-    }
+    this.users[user.id] = user;
+
+    this.emitMessage(new Message({ type: MessageType.userJoined, user }));
 
     return user;
   }

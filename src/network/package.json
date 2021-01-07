@@ -2,7 +2,8 @@
   "name": "quiz-room-network",
   "version": "1.0.0",
   "scripts": {
-    "start": "ts-node app.ts --project ./tsconfig.json"
+    "start": "ts-node app.ts --project ./tsconfig.json",
+    "build": "tsc --watch"
   },
   "keywords": [],
   "author": "",
