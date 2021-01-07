@@ -90,7 +90,7 @@ function MessageList() {
 
   return (
     <>
-      {ctx.messages.map((el) => {
+      {ctx.messages.slice(-80).map((el) => {
         const p = el.getRenderProps(ctx.user!) as any;
 
         return <Message key={el.id} {...p}></Message>;

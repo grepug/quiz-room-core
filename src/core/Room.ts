@@ -3,7 +3,7 @@ import { Message, MessageType } from './models/Message';
 import { uuid } from 'quiz-room-utils';
 
 export interface RoomConfig {
-  emitMessage: (msg: Message) => void;
+  emitMessage?: (msg: Message) => void;
   onUserJoin?: (user: User) => void;
   onUserLeave?: (userId: string) => void;
   saveMessage?: boolean;
@@ -48,10 +48,10 @@ export class Room {
   }
 
   protected emitMessage(msg: Message) {
-    this.config.emitMessage(msg);
+    this.config.emitMessage?.(msg);
 
     if (this.config.saveMessage) {
-      if (msg.shouldSave()) {
+      if (msg.shouldSave) {
         this.messages.push(msg);
       }
     }

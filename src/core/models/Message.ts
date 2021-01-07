@@ -9,7 +9,7 @@ export enum MessageType {
   userJoined = 'userJoined',
   useLeft = 'userLeft',
   init = 'init',
-  nofityUsers = 'notifyUsers',
+  nofityUsersChange = 'notifyUsersChange',
 }
 
 export enum AdminMessageType {
@@ -56,7 +56,7 @@ export class Message implements MessageProps {
     return this.type === MessageType.system;
   }
 
-  shouldSave() {
+  get shouldSave() {
     return [MessageType.default, MessageType.system].includes(this.type);
   }
 

@@ -67,7 +67,7 @@ function useApp(_: {}) {
 
         setMessages(quizMessages);
         break;
-      case MessageType.nofityUsers:
+      case MessageType.nofityUsersChange:
         const usersProps: UserProps[] = JSON.parse(message.content ?? '[]');
         const users = usersProps.map((el) => new User(el));
         setUsers(users);
@@ -169,7 +169,7 @@ export const {
 );
 
 function getConnection() {
-  return new window.WebSocket('ws://192.168.0.117:5200');
+  return new window.WebSocket('ws://192.168.0.117:5200/ws');
 }
 
 function linkQuizMessages(messages: QuizMessage[]) {

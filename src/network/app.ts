@@ -1,4 +1,6 @@
 import WebSocket, { Server } from 'ws';
+import express from 'express';
+import http from 'http';
 import {
   Message,
   QuizRoom,
@@ -6,25 +8,47 @@ import {
   mockQuestions,
   MessageType,
 } from 'quiz-room-core';
+import path from 'path';
 
-const server = new Server({ port: 5200, host: '0.0.0.0' });
+const app = express();
 
-let room: QuizRoom;
+const httpServer = http.createServer(app);
+
+app.use(express.static(path.join(__dirname, '../client/out')));
+
+const server = new Server({ server: httpServer });
+
+httpServer.listen(5200, '0.0.0.0');
+
+const room = new QuizRoom({
+  questions: mockQuestions,
+  SHOW_ANSWER_CORRECT_DELAY: 3000,
+  SHOW_NEXT_QUESTION_DELAY: 3000,
+  saveMessage: true,
+});
 
 let storedWs: Record<string, WebSocket> = {};
 
 server.on('connection', function (ws) {
-  if (!room) {
-    room = new QuizRoom({
-      questions: mockQuestions,
-      emitMessage: handleEmitMessage,
-      SHOW_ANSWER_CORRECT_DELAY: 3000,
-      SHOW_NEXT_QUESTION_DELAY: 3000,
-      saveMessage: true,
-    });
-  }
-
   room.config.onUserJoin = handleAddUser;
+  room.config.emitMessage = handleEmitMessage;
+
+  ws.on('message', handleWSMessage);
+
+  ws.once('close', (_) => {
+    const pair = Object.entries(storedWs).find(([_, _ws]) => _ws === ws);
+
+    if (pair) {
+      const [userId] = pair;
+
+      room.handleUserLeave(userId);
+      delete storedWs[userId];
+
+      notifyUsersChange();
+
+      ws.off('message', handleWSMessage);
+    }
+  });
 
   function handleAddUser(user: User) {
     storedWs[user.id] = ws;
@@ -41,7 +65,7 @@ server.on('connection', function (ws) {
 
   function notifyUsersChange() {
     const message = new Message({
-      type: MessageType.nofityUsers,
+      type: MessageType.nofityUsersChange,
       content: JSON.stringify(Object.values(room.users)),
     });
 
@@ -64,26 +88,14 @@ server.on('connection', function (ws) {
     }
   }
 
-  ws.on('message', (wsMsg: string) => {
+  function handleWSMessage(messageString: string) {
     try {
-      const msgProps = JSON.parse(wsMsg);
+      const msgProps = JSON.parse(messageString);
       const message = new Message(msgProps);
 
       room.handleIncomingMessage(message);
     } catch (e) {
       console.log(e);
     }
-  });
-
-  ws.on('close', (_) => {
-    const pair: [string, WebSocket] | undefined = Object.entries(
-      storedWs
-    ).filter(([_, _ws]) => _ws === ws)?.[0];
-
-    if (pair) {
-      room.handleUserLeave(pair[0]);
-
-      notifyUsersChange();
-    }
-  });
+  }
 });
