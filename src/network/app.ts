@@ -1,5 +1,11 @@
 import WebSocket, { Server } from 'ws';
-import { Message, QuizRoom, User, mockQuestions } from 'quiz-room-core';
+import {
+  Message,
+  QuizRoom,
+  User,
+  mockQuestions,
+  MessageType,
+} from 'quiz-room-core';
 
 const server = new Server({ port: 5200, host: '0.0.0.0' });
 
@@ -26,9 +32,20 @@ server.on('connection', function (ws) {
 
     const restoreMessages = room.getRestoreMessages();
 
+    notifyUsers();
+
     if (restoreMessages) {
       handleEmitMessage(restoreMessages, user);
     }
+  }
+
+  function notifyUsers() {
+    const message = new Message({
+      type: MessageType.nofityUsers,
+      content: JSON.stringify(Object.values(room.users)),
+    });
+
+    handleEmitMessage(message);
   }
 
   function handleEmitMessage(message: Message, user?: User) {

@@ -7,7 +7,8 @@ export enum MessageType {
   default = 'default',
   system = 'system',
   userJoined = 'userJoined',
-  restoreMessages = 'restoreMessages',
+  init = 'init',
+  nofityUsers = 'notifyUsers',
 }
 
 export enum AdminMessageType {

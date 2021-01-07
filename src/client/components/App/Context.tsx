@@ -1,5 +1,12 @@
 import { createMyContext } from 'quiz-room-utils/createMyContext';
-import { Message, MessageType, User, Role, MessageProps } from 'quiz-room-core';
+import {
+  Message,
+  MessageType,
+  User,
+  Role,
+  MessageProps,
+  UserProps,
+} from 'quiz-room-core';
 import { useEffect, useRef, useState } from 'react';
 import { message } from 'antd';
 import { QuizMessage } from './models/QuizMessage';
@@ -20,6 +27,7 @@ function initUser(): User | undefined {
 
 function useApp(_: {}) {
   const [messages, setMessages] = useState<QuizMessage[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const tmpUserId = useRef<string>();
   const [user, setUser] = useState<User>();
@@ -50,7 +58,7 @@ function useApp(_: {}) {
     console.log('messsage', message, rawData);
 
     switch (message.type) {
-      case MessageType.restoreMessages:
+      case MessageType.init:
         const messagesProps: MessageProps[] = JSON.parse(message.content!);
         const messages = messagesProps.map(Message.fromJSON);
 
@@ -58,6 +66,12 @@ function useApp(_: {}) {
         linkQuizMessages(quizMessages);
 
         setMessages(quizMessages);
+        break;
+      case MessageType.nofityUsers:
+        const usersProps: UserProps[] = JSON.parse(message.content ?? '[]');
+        const users = usersProps.map((el) => new User(el));
+        setUsers(users);
+
         break;
       case MessageType.default:
       case MessageType.system:
@@ -134,6 +148,7 @@ function useApp(_: {}) {
   return {
     join,
     user,
+    users,
     setUser,
     messages,
     sendMessage,

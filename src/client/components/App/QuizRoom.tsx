@@ -60,7 +60,7 @@ function MyPage() {
 
   return (
     <Page>
-      <Navbar title="Quiz Room" />
+      <Navbar title={`Quiz Room (${ctx.users.length} online)`} />
       <Messagebar
         placeholder="Your Answer"
         value={inputValue}

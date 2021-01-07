@@ -10,7 +10,8 @@ export interface RoomConfig {
 
 export class Room {
   id = uuid();
-  protected users: Record<string, User> = {};
+  users: Record<string, User> = {};
+
   private messages: Message[] = [];
 
   constructor(protected config: RoomConfig) {}
@@ -30,7 +31,7 @@ export class Room {
     if (!this.messages.length) return;
 
     return new Message({
-      type: MessageType.restoreMessages,
+      type: MessageType.init,
       content: JSON.stringify(this.messages),
     });
   }
@@ -53,9 +54,9 @@ export class Room {
   private addUser(user?: User) {
     if (!user) return;
 
-    this.config.onUserJoin?.(user);
-
     this.users[user.id] = user;
+
+    this.config.onUserJoin?.(user);
 
     this.emitMessage(new Message({ type: MessageType.userJoined, user }));
 
