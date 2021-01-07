@@ -74,4 +74,14 @@ server.on('connection', function (ws) {
       console.log(e);
     }
   });
+
+  ws.on('close', (_) => {
+    const [userId] = Object.entries(storedWs).filter(
+      ([_, _ws]) => _ws === ws
+    )[0];
+
+    room.handleUserLeave(userId);
+
+    notifyUsers();
+  });
 });

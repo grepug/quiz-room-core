@@ -5,6 +5,7 @@ import { uuid } from 'quiz-room-utils';
 export interface RoomConfig {
   emitMessage: (msg: Message) => void;
   onUserJoin?: (user: User) => void;
+  onUserLeave?: (userId: string) => void;
   saveMessage?: boolean;
 }
 
@@ -25,6 +26,16 @@ export class Room {
         this.handleDefaultMessage(msg);
         break;
     }
+  }
+
+  handleUserLeave(userId: string) {
+    const user = this.users[userId];
+
+    delete this.users[userId];
+
+    this.config.onUserLeave?.(userId);
+
+    this.emitMessage(new Message({ type: MessageType.useLeft, user }));
   }
 
   getRestoreMessages() {
@@ -61,10 +72,5 @@ export class Room {
     this.emitMessage(new Message({ type: MessageType.userJoined, user }));
 
     return user;
-  }
-
-  // 查找已注册用户
-  private getUser(id: string) {
-    return this.users[id];
   }
 }

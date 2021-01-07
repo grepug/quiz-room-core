@@ -73,9 +73,12 @@ function useApp(_: {}) {
         setUsers(users);
 
         break;
+
       case MessageType.default:
       case MessageType.system:
       case MessageType.userJoined:
+      case MessageType.useLeft:
+        const isUserLeft = message.type === MessageType.useLeft;
         const isUserJoined = message.type === MessageType.userJoined;
         const isMeJoined =
           isUserJoined && tmpUserId.current === message.user?.id;
@@ -94,9 +97,11 @@ function useApp(_: {}) {
             lastMsg.nextMessage = message;
           }
 
-          if (isUserJoined) {
+          if (isUserJoined || isUserLeft) {
+            const text = isUserJoined ? 'joined' : 'left';
+
+            message.content = `${message.user?.name} ${text}`;
             message.type = MessageType.system;
-            message.content = `${message.user?.name} joined`;
           }
 
           return msgs.concat(message);

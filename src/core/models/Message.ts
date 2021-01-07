@@ -7,6 +7,7 @@ export enum MessageType {
   default = 'default',
   system = 'system',
   userJoined = 'userJoined',
+  useLeft = 'userLeft',
   init = 'init',
   nofityUsers = 'notifyUsers',
 }
