@@ -75,9 +75,11 @@ function MessageList() {
 
   return (
     <>
-      {ctx.messages.map((el) => (
-        <Message key={el.id} {...el.getRenderProps(ctx.user!)}></Message>
-      ))}
+      {ctx.messages.map((el) => {
+        const p = el.getRenderProps(ctx.user!) as any;
+
+        return <Message key={el.id} {...p}></Message>;
+      })}
     </>
   );
 }

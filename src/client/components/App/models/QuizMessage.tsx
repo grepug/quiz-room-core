@@ -1,4 +1,5 @@
 import { Message, MessageType, MessageProps, User } from 'quiz-room-core';
+import { ReactNode } from 'react';
 
 interface QuizMessageProps extends MessageProps {}
 
@@ -8,7 +9,7 @@ interface MessageRenderProps {
   first: boolean;
   last: boolean;
   tail: boolean;
-  text?: string;
+  text?: ReactNode;
   image?: string;
 }
 
@@ -21,10 +22,23 @@ export class QuizMessage extends Message {
   }
 
   getRenderProps(me: User): MessageRenderProps {
+    const isSent = this.user?.id === me.id;
+
+    let text: ReactNode = this.content;
+    if (this.isSystem) {
+      text = <span style={{ color: 'blue' }}>{text}</span>;
+    } else if (this.user?.isAdmin && !isSent) {
+      text = <span style={{ color: 'red' }}>{text}</span>;
+    }
+
     return {
-      text: this.content,
-      name: this.user?.name ?? 'System',
-      type: this.user?.id !== me.id ? 'received' : 'sent',
+      text,
+      name: this.isSystem
+        ? 'System'
+        : this.user?.isAdmin
+        ? `${this.user.name} (admin)`
+        : this.user?.name ?? '',
+      type: !isSent ? 'received' : 'sent',
       image: this.imageURL,
       first: !this.user?.isEqual(this.prevMessage?.user),
       last: !this.user?.isEqual(this.nextMessage?.user),

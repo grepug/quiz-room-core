@@ -37,6 +37,7 @@ function useApp(_: {}) {
         setMessages((msgs) => {
           const lastMsg: QuizMessage | undefined = msgs[msgs.length - 1];
           message.prevMessage = lastMsg;
+
           if (lastMsg) {
             lastMsg.nextMessage = message;
           }
@@ -108,7 +109,7 @@ export const {
 );
 
 function getConnection() {
-  return new window.WebSocket('ws://192.168.31.171:5200');
+  return new window.WebSocket('ws://192.168.0.117:5200');
 }
 
 function linkQuizMessages(messages: QuizMessage[]) {
