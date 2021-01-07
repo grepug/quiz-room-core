@@ -35,12 +35,20 @@ export class Room {
     });
   }
 
-  protected handleDefaultMessage(msg: Message) {
+  emitMessage(msg: Message) {
     this.config.emitMessage(msg);
 
     if (this.config.saveMessage) {
-      this.messages.push(msg);
+      if (msg.shouldSave()) {
+        console.log('saved', msg);
+
+        this.messages.push(msg);
+      }
     }
+  }
+
+  protected handleDefaultMessage(msg: Message) {
+    this.emitMessage(msg);
   }
 
   // 用户注册
@@ -51,9 +59,7 @@ export class Room {
       this.users[user.id] = user;
       this.config.onAddUser?.(user);
 
-      this.config.emitMessage(
-        new Message({ type: MessageType.userJoined, user })
-      );
+      this.emitMessage(new Message({ type: MessageType.userJoined, user }));
     }
 
     return user;

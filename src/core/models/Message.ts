@@ -54,6 +54,10 @@ export class Message implements MessageProps {
     return this.type === MessageType.system;
   }
 
+  shouldSave() {
+    return [MessageType.default, MessageType.system].includes(this.type);
+  }
+
   isEqual(message?: Message) {
     return message?.id === this.id;
   }

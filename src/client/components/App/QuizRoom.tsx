@@ -64,7 +64,7 @@ function MessageList() {
       let name = prompt('Input Your Name');
 
       if (name?.trim()) {
-        ctx.join(name, Role.admin);
+        ctx.join(name);
       }
     }
   }, [ctx.user]);
@@ -72,6 +72,8 @@ function MessageList() {
   if (!ctx.user) {
     return null;
   }
+
+  console.log('messages', ctx.messages);
 
   return (
     <>

@@ -38,10 +38,6 @@ server.on('connection', function (ws) {
   }
 
   function handleEmitMessage(message: Message, user?: User) {
-    if (message.type === MessageType.system) {
-      console.log('message', message);
-    }
-
     try {
       const messageString = JSON.stringify(message);
 

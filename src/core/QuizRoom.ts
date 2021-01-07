@@ -77,7 +77,7 @@ export class QuizRoom extends Room {
           this.state = QuizState.ongoing_correctly_answered;
           // 当有人答对，延迟提示答案正确
           await this.sleepAndEnsureState(this.config.SHOW_ANSWER_CORRECT_DELAY);
-          this.config.emitMessage(
+          this.emitMessage(
             sm.answerCorrectMsg(msg.user, this.curQuestionIndex)
           );
           this.state = QuizState.ongoing_loading_next;
@@ -87,7 +87,7 @@ export class QuizRoom extends Room {
         } catch {}
       }
     } else if (this.state === QuizState.ongoing_loading_next) {
-      this.config.emitMessage(sm.loadingDontHurry());
+      this.emitMessage(sm.loadingDontHurry());
     } else if (this.state === QuizState.completed) {
     }
   }
@@ -105,7 +105,7 @@ export class QuizRoom extends Room {
       this.curQuestionIndex += 1;
     }
 
-    this.config.emitMessage(sm.loadingNextQuestionMsg());
+    this.emitMessage(sm.loadingNextQuestionMsg());
 
     await this.sleepAndEnsureState(this.config.SHOW_NEXT_QUESTION_DELAY);
 
@@ -114,7 +114,7 @@ export class QuizRoom extends Room {
   }
 
   private emitNewQuestion() {
-    this.config.emitMessage(
+    this.emitMessage(
       sm.newQuestionMsg(this.curQuestion, this.curQuestionIndex)
     );
   }
@@ -123,20 +123,20 @@ export class QuizRoom extends Room {
     this.curQuestionIndex = 0;
     this.correctAnswers = [];
     this.state = QuizState.ongoing_answering;
-    this.config.emitMessage(sm.quizStartMsg());
+    this.emitMessage(sm.quizStartMsg());
     this.nextQuestion({ initial: true });
   }
 
   private revealCorrectAnswer() {
     this.state = QuizState.ongoing_loading_next;
-    this.config.emitMessage(sm.revealAnswerMsg(this.curQuestion));
+    this.emitMessage(sm.revealAnswerMsg(this.curQuestion));
     this.nextQuestion();
   }
 
   private complete() {
     this.state = QuizState.completed;
 
-    this.config.emitMessage(sm.quizCompletedMsg(this.getResultString()));
+    this.emitMessage(sm.quizCompletedMsg(this.getResultString()));
   }
 
   private getResultString(): string {

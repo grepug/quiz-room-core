@@ -4,6 +4,8 @@ import { useRef, useState } from 'react';
 import { message } from 'antd';
 import { QuizMessage } from './models/QuizMessage';
 
+const admins = ['kai', 'qq'];
+
 function useApp(_: {}) {
   const [messages, setMessages] = useState<QuizMessage[]>([]);
 
@@ -18,11 +20,6 @@ function useApp(_: {}) {
     console.log('messsage', message, rawData);
 
     switch (message.type) {
-      case MessageType.userJoined:
-        if (tmpUserName.current === message.user?.name) {
-          setUser(message.user);
-        }
-        break;
       case MessageType.restoreMessages:
         const messagesProps: MessageProps[] = JSON.parse(message.content!);
         const messages = messagesProps.map(Message.fromJSON);
@@ -34,6 +31,17 @@ function useApp(_: {}) {
         break;
       case MessageType.default:
       case MessageType.system:
+      case MessageType.userJoined:
+        const isUserJoined = message.type === MessageType.userJoined;
+        const isMeJoined =
+          isUserJoined && tmpUserName.current === message.user?.name;
+
+        if (isMeJoined) {
+          setUser(message.user);
+
+          break;
+        }
+
         setMessages((msgs) => {
           const lastMsg: QuizMessage | undefined = msgs[msgs.length - 1];
           message.prevMessage = lastMsg;
@@ -42,19 +50,26 @@ function useApp(_: {}) {
             lastMsg.nextMessage = message;
           }
 
+          if (isUserJoined) {
+            message.type = MessageType.system;
+            message.content = `${message.user?.name} joined`;
+          }
+
           return msgs.concat(message);
         });
         break;
     }
   }
 
-  function join(name: string, role = Role.user) {
+  function join(name: string) {
     let connection = getConnection();
     ws.current = connection;
 
     connection.onmessage = handleMessage;
 
     connection.onopen = () => {
+      const role = admins.includes(name) ? Role.admin : Role.user;
+
       const user = new User({ name, role });
 
       tmpUserName.current = user.name;

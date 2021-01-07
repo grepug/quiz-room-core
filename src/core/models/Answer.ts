@@ -23,6 +23,9 @@ export class Answer implements AnswerProps {
   get isCorrect() {
     if (!this.user) return true;
 
-    return this.question?.answer.content === this.content.trim();
+    return (
+      this.question?.answer.content.toLowerCase() ===
+      this.content.trim().toLowerCase()
+    );
   }
 }

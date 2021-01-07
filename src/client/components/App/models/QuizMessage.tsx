@@ -21,6 +21,21 @@ export class QuizMessage extends Message {
     super(props);
   }
 
+  isSameSender(msg?: QuizMessage) {
+    return (
+      msg &&
+      (Boolean(this.user?.isEqual(msg.user)) || (this.isSystem && msg.isSystem))
+    );
+  }
+
+  get isFirst() {
+    return !this.isSameSender(this.prevMessage);
+  }
+
+  get isLast() {
+    return !this.isSameSender(this.nextMessage);
+  }
+
   getRenderProps(me: User): MessageRenderProps {
     const isSent = this.user?.id === me.id;
 
@@ -40,8 +55,8 @@ export class QuizMessage extends Message {
         : this.user?.name ?? '',
       type: !isSent ? 'received' : 'sent',
       image: this.imageURL,
-      first: !this.user?.isEqual(this.prevMessage?.user),
-      last: !this.user?.isEqual(this.nextMessage?.user),
+      first: this.isFirst,
+      last: this.isLast,
       tail: !this.nextMessage,
     };
   }
