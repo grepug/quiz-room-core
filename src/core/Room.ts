@@ -10,7 +10,7 @@ export interface RoomConfig {
 
 export class Room {
   id = uuid();
-  private users: Record<string, User> = {};
+  protected users: Record<string, User> = {};
   private messages: Message[] = [];
 
   constructor(protected config: RoomConfig) {}

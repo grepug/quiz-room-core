@@ -6,7 +6,7 @@ import {
   Messagebar,
   Messages,
 } from 'framework7-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useContext, Provider } from './Context';
 
 export default function () {
@@ -20,16 +20,41 @@ export default function () {
 function MyPage() {
   const ctx = useContext()!;
   const [inputValue, setInputValue] = useState('');
+  const inputValueRef = useRef('');
 
   function sendMessage() {
-    const value = inputValue.trim();
+    const value = inputValueRef.current.trim();
 
     if (value) {
-      ctx.sendMessage(inputValue);
+      ctx.sendMessage(value);
 
       setInputValue('');
     }
   }
+
+  useEffect(() => {
+    const el = document.querySelector<HTMLTextAreaElement>(
+      '#message-bar textarea'
+    );
+
+    if (el) {
+      // el.type
+      el.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+          e.preventDefault();
+        }
+      };
+
+      return () => {
+        el.onkeypress = null;
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    inputValueRef.current = inputValue;
+  }, [inputValue]);
 
   return (
     <Page>
@@ -39,14 +64,11 @@ function MyPage() {
         value={inputValue}
         sheetVisible={false}
         onInput={(e) => setInputValue(e.target.value)}
+        id="message-bar"
       >
-        <Link
-          iconIos="f7:arrow_up_circle_fill"
-          iconAurora="f7:arrow_up_circle_fill"
-          iconMd="material:send"
-          slot="inner-end"
-          onClick={sendMessage}
-        />
+        <Link slot="inner-end" onClick={sendMessage}>
+          Send
+        </Link>
       </Messagebar>
       <Messages>
         <MessageList />

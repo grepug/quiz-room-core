@@ -22,10 +22,15 @@ export class QuizMessage extends Message {
   }
 
   isSameSender(msg?: QuizMessage) {
-    return (
-      msg &&
-      (Boolean(this.user?.isEqual(msg.user)) || (this.isSystem && msg.isSystem))
-    );
+    if (!msg) {
+      return false;
+    }
+
+    if (this.isSystem || msg.isSystem) {
+      return this.isSystem && msg.isSystem;
+    }
+
+    return Boolean(this.user?.isEqual(msg.user));
   }
 
   get isFirst() {
