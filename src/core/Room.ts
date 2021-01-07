@@ -38,7 +38,7 @@ export class Room {
     this.emitMessage(new Message({ type: MessageType.useLeft, user }));
   }
 
-  getRestoreMessages() {
+  getInitMessage() {
     if (!this.messages.length) return;
 
     return new Message({
@@ -47,7 +47,7 @@ export class Room {
     });
   }
 
-  emitMessage(msg: Message) {
+  protected emitMessage(msg: Message) {
     this.config.emitMessage(msg);
 
     if (this.config.saveMessage) {

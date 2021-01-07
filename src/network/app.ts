@@ -30,16 +30,16 @@ server.on('connection', function (ws) {
     storedWs[user.id] = ws;
     console.log('storedWs', Object.keys(storedWs));
 
-    const restoreMessages = room.getRestoreMessages();
+    const initMessage = room.getInitMessage();
 
-    notifyUsers();
+    notifyUsersChange();
 
-    if (restoreMessages) {
-      handleEmitMessage(restoreMessages, user);
+    if (initMessage) {
+      handleEmitMessage(initMessage, user);
     }
   }
 
-  function notifyUsers() {
+  function notifyUsersChange() {
     const message = new Message({
       type: MessageType.nofityUsers,
       content: JSON.stringify(Object.values(room.users)),
@@ -76,12 +76,14 @@ server.on('connection', function (ws) {
   });
 
   ws.on('close', (_) => {
-    const [userId] = Object.entries(storedWs).filter(
-      ([_, _ws]) => _ws === ws
-    )[0];
+    const pair: [string, WebSocket] | undefined = Object.entries(
+      storedWs
+    ).filter(([_, _ws]) => _ws === ws)?.[0];
 
-    room.handleUserLeave(userId);
+    if (pair) {
+      room.handleUserLeave(pair[0]);
 
-    notifyUsers();
+      notifyUsersChange();
+    }
   });
 });
