@@ -141,18 +141,22 @@ export class QuizRoom extends Room {
 
   private getResultString(): string {
     const result: Record<string, number> = {};
+    const correctAnswers = this.correctAnswers.filter(
+      (el) => this.users[el.user?.id ?? '']
+    );
 
-    for (const answer of this.correctAnswers) {
+    for (const answer of correctAnswers) {
       const id = answer.user!.id;
       const prevScore = result[id] || 0;
 
       result[id] = prevScore + 1;
     }
 
-    const getName = (id: string) => this.users[id].name;
+    const getName = (id: string) => this.users[id]?.name;
 
     return Object.entries(result)
       .sort(([_, x], [__, y]) => y - x)
+      .filter(([id]) => getName(id))
       .map(([id, score]) => `${getName(id)}: ${score}`)
       .join('\n');
   }

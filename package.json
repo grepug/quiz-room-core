@@ -13,7 +13,8 @@
     "start": "npm run start --prefix ./src/client",
     "serve": "npm start --prefix ./src/network",
     "build": "concurrently \"npm run build --prefix ./src/network\" \"npm run build --prefix ./src/utils\" \"npm run build --prefix ./src/core\"",
-    "buildClient": "npm run build --prefix ./src/client"
+    "buildClient": "npm run build --prefix ./src/client",
+    "export": "npm run buildClient && npm run export --prefix ./src/client"
   },
   "keywords": [],
   "author": "",
