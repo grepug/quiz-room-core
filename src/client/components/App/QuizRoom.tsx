@@ -23,6 +23,8 @@ function MyPage() {
   const inputValueRef = useRef('');
 
   function sendMessage() {
+    if (!ctx.user) return;
+
     const value = inputValueRef.current.trim();
 
     if (value) {
@@ -50,7 +52,7 @@ function MyPage() {
         el.onkeypress = null;
       };
     }
-  }, []);
+  }, [ctx.user]);
 
   useEffect(() => {
     inputValueRef.current = inputValue;
