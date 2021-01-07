@@ -169,7 +169,7 @@ export const {
 );
 
 function getConnection() {
-  return new window.WebSocket('ws://192.168.0.117:5200/ws');
+  return new window.WebSocket('ws://localhost:5200/ws');
 }
 
 function linkQuizMessages(messages: QuizMessage[]) {

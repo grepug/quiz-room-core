@@ -1,13 +1,8 @@
-import {
-  Page,
-  Navbar,
-  Link,
-  Message,
-  Messagebar,
-  Messages,
-} from 'framework7-react';
+import { Page, Navbar, Link, Messagebar, Messages } from 'framework7-react';
 import { useEffect, useRef, useState } from 'react';
 import { useContext, Provider } from './Context';
+import { f7 } from 'framework7-react';
+import { MessageList } from './MessageList';
 
 export default function () {
   return (
@@ -22,13 +17,27 @@ function MyPage() {
   const [inputValue, setInputValue] = useState('');
   const inputValueRef = useRef('');
 
+  const lastSendTime = useRef(0);
+
   function sendMessage() {
     if (!ctx.user) return;
+    if (Date.now() - lastSendTime.current < 2000) {
+      f7.toast
+        .create({
+          text: 'too fast!',
+          position: 'center',
+          closeTimeout: 2000,
+        })
+        .open();
+
+      return;
+    }
 
     const value = inputValueRef.current.trim();
 
     if (value) {
       ctx.sendMessage(value);
+      lastSendTime.current = Date.now();
 
       setInputValue('');
     }
@@ -76,25 +85,5 @@ function MyPage() {
         <MessageList />
       </Messages>
     </Page>
-  );
-}
-
-function MessageList() {
-  const ctx = useContext()!;
-
-  if (!ctx.user) {
-    return null;
-  }
-
-  console.log('messages', ctx.messages);
-
-  return (
-    <>
-      {ctx.messages.slice(-80).map((el) => {
-        const p = el.getRenderProps(ctx.user!) as any;
-
-        return <Message key={el.id} {...p}></Message>;
-      })}
-    </>
   );
 }
