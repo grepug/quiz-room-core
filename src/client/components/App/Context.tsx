@@ -8,8 +8,8 @@ import {
   UserProps,
 } from 'quiz-room-core';
 import { useEffect, useRef, useState } from 'react';
-import { message } from 'antd';
 import { QuizMessage } from './models/QuizMessage';
+import { toast } from './toast';
 
 const admins = ['kai', 'qq'];
 const LS_ME_INFO_KEY = 'me_info';
@@ -25,31 +25,96 @@ function initUser(): User | undefined {
   }
 }
 
+enum AppState {
+  notConnected = 'notConnected',
+  connecting = 'connecting',
+  error = 'error',
+  closed = 'closed',
+}
+
 function useApp(_: {}) {
   const [messages, setMessages] = useState<QuizMessage[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
   const tmpUserId = useRef<string>();
   const [user, setUser] = useState<User>();
-  const ws = useRef<WebSocket>();
+  const [ws, setWS] = useState<WebSocket>();
+
+  const tempUser = useRef<User>();
 
   useEffect(() => {
-    if (isClient()) {
-      if (user) {
-        localStorage.setItem(LS_ME_INFO_KEY, JSON.stringify(user));
-      } else {
-        const user = initUser() ?? new User();
-        const userName = prompt('Input Your Name', user?.name)?.trim();
+    if (!isClient()) return;
 
-        if (userName) {
-          user.name = userName;
-          user.role = admins.includes(userName) ? Role.admin : Role.user;
-
-          join(user);
-        }
-      }
+    if (user) {
+      localStorage.setItem(LS_ME_INFO_KEY, JSON.stringify(user));
+    } else {
+      handleLogin();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (ws) {
+      ws.onmessage = handleMessage;
+
+      ws.onopen = () => {
+        tmpUserId.current = tempUser.current?.id;
+
+        sendMessage(
+          new Message({
+            type: MessageType.join,
+            content: '',
+            user: tempUser.current,
+          })
+        );
+
+        ws.onopen = null;
+      };
+
+      ws.onclose = (e) => {
+        toast('You are offline, reconnecting...');
+
+        handleLogin();
+      };
+
+      ws.onerror = (e) => {
+        toast('cannot establish connection!');
+
+        ws.close();
+      };
+
+      return () => {
+        ws.onmessage = null;
+        ws.onopen = null;
+        ws.onclose = null;
+        ws.onerror = null;
+      };
+    }
+  }, [ws, user]);
+
+  async function handleLogin() {
+    tempUser.current = undefined;
+    setUser(undefined);
+    setMessages([]);
+    setUsers([]);
+    ws?.close();
+    setWS(undefined);
+
+    setTimeout(() => {
+      const user = initUser() ?? new User();
+
+      const userName = prompt(
+        'To Login Please Input Your Name',
+        user?.name
+      )?.trim();
+
+      if (userName) {
+        user.name = userName;
+        user.role = admins.includes(userName) ? Role.admin : Role.user;
+
+        join(user);
+      }
+    }, 1000);
+  }
 
   function handleMessage(event: MessageEvent<any>) {
     const rawData: string = event.data;
@@ -96,42 +161,15 @@ function useApp(_: {}) {
 
   function join(user: User) {
     let connection = getConnection();
-    ws.current = connection;
-
-    connection.onmessage = handleMessage;
-
-    connection.onopen = () => {
-      tmpUserId.current = user.id;
-
-      sendMessage(
-        new Message({
-          type: MessageType.join,
-          content: '',
-          user,
-        })
-      );
-
-      connection.onopen = null;
-    };
-
-    connection.onclose = () => {
-      message.error('You are offline, reconnecting...');
-
-      setTimeout(() => {
-        connection = getConnection();
-      }, 3000);
-    };
-
-    connection.onerror = () => {
-      message.error('cannot establish connection!');
-    };
+    setWS(connection);
+    tempUser.current = user;
   }
 
   function sendMessage(msg: Message | string) {
     if (typeof msg === 'string') {
       msg = new Message({ content: msg, type: MessageType.default, user });
     }
-    ws.current?.send(JSON.stringify(msg));
+    ws?.send(JSON.stringify(msg));
   }
 
   return {

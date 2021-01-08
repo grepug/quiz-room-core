@@ -131,8 +131,11 @@ export class QuizRoom extends Room {
   }
 
   private revealCorrectAnswer() {
+    if (this.state !== QuizState.ongoing_answering) return;
+
     this.state = QuizState.ongoing_loading_next;
     this.emitMessage(sm.revealAnswerMsg(this.curQuestion));
+
     this.nextQuestion();
   }
 
