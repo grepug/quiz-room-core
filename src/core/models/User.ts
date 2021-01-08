@@ -15,15 +15,10 @@ export interface UserProps {
 export class User implements UserProps {
   id = uuid();
   name = '';
-  answers: Answer[] = [];
   role = Role.user;
 
   constructor(props?: Partial<UserProps>) {
     Object.assign(this, props);
-  }
-
-  get correctAnswerCount() {
-    return this.answers.filter((el) => el.isCorrect).length;
   }
 
   get isAdmin() {

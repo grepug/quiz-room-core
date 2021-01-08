@@ -19,13 +19,14 @@ interface QuizRoomConfig extends RoomConfig {
   SHOW_NEXT_QUESTION_DELAY: number;
 }
 
-interface QuizRoomProps extends RoomProps {
+export interface QuizRoomProps extends RoomProps {
+  config: QuizRoomConfig;
   correctAnswers: AnswerProps[];
   curQuestionIndex: number;
   state: QuizState;
 }
 
-export class QuizRoom extends Room implements QuizRoomProps {
+export class QuizRoom extends Room {
   correctAnswers: Answer[] = [];
 
   curQuestionIndex = 0;
@@ -35,7 +36,21 @@ export class QuizRoom extends Room implements QuizRoomProps {
     return this.config.questions[this.curQuestionIndex];
   }
 
-  static fromJSON(props: QuizRoomProps) {}
+  static fromJSON(props: QuizRoomProps) {
+    const room = Room.fromJSON(props);
+    const quizRoom = new QuizRoom(props.config);
+
+    quizRoom.id = room.id;
+    quizRoom.users = room.users;
+    quizRoom.config = props.config;
+    quizRoom.correctAnswers = props.correctAnswers.map((el) =>
+      Answer.fromJSON(el)
+    );
+    quizRoom.curQuestionIndex = props.curQuestionIndex;
+    quizRoom.state = props.state;
+
+    return quizRoom;
+  }
 
   constructor(public config: QuizRoomConfig) {
     super(config);
@@ -51,6 +66,7 @@ export class QuizRoom extends Room implements QuizRoomProps {
   toJSON(): QuizRoomProps {
     return {
       ...super.toJSON(),
+      config: this.config,
       correctAnswers: this.correctAnswers,
       curQuestionIndex: this.curQuestionIndex,
       state: this.state,
@@ -165,8 +181,8 @@ export class QuizRoom extends Room implements QuizRoomProps {
   private getResultString(): string {
     let result: Record<string, number> = {};
 
-    const correctAnswers = this.correctAnswers.filter(
-      (el) => this.users[el.user?.id ?? '']
+    const correctAnswers = this.correctAnswers.filter((el) =>
+      this.users.get(el.user?.id ?? '')
     );
 
     for (const answer of correctAnswers) {
@@ -176,7 +192,7 @@ export class QuizRoom extends Room implements QuizRoomProps {
       result[id] = prevScore + 1;
     }
 
-    const getName = (id: string) => this.users[id]?.name;
+    const getName = (id: string) => this.users.get(id)?.name;
 
     return Object.entries(result)
       .sort(([_, x], [__, y]) => y - x)

@@ -13,14 +13,26 @@ export interface RoomConfig {
 
 export interface RoomProps {
   id: string;
-  users: Record<string, UserProps>;
+  users: UserProps[];
+  config: RoomConfig;
 }
 
-export class Room implements RoomProps {
+export class Room {
   id = uuid();
-  users: Record<string, User> = {};
+  users = new Map<string, User>([]);
 
-  constructor(protected config: RoomConfig) {}
+  static fromJSON(props: RoomProps) {
+    let room = new Room(props.config);
+
+    room.id = props.id;
+    const users = props.users.map((el) => new User(el));
+
+    room.users = new Map(users.map((el) => [el.id, el]));
+
+    return room;
+  }
+
+  constructor(public config: RoomConfig) {}
 
   handleIncomingMessage(msg: Message) {
     switch (msg.type) {
@@ -34,9 +46,11 @@ export class Room implements RoomProps {
   }
 
   handleUserLeave(userId: string) {
-    const user = this.users[userId];
+    const user = this.users.get(userId);
 
-    delete this.users[userId];
+    if (!user) return;
+
+    this.users.delete(userId);
 
     this.config.onUserLeave?.(userId);
 
@@ -61,7 +75,8 @@ export class Room implements RoomProps {
   protected toJSON(): RoomProps {
     return {
       id: this.id,
-      users: this.users,
+      users: Array.from(this.users.values()),
+      config: this.config,
     };
   }
 
@@ -84,7 +99,7 @@ export class Room implements RoomProps {
   private addUser(user?: User) {
     if (!user) return;
 
-    this.users[user.id] = user;
+    this.users.set(user.id, user);
 
     this.config.onUserJoin?.(user);
 

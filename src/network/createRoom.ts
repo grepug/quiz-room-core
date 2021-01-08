@@ -1,30 +1,39 @@
-import { QuizRoom, mockQuestions, Message, MessageProps } from 'quiz-room-core';
+import {
+  QuizRoom,
+  QuizRoomProps,
+  mockQuestions,
+  Message,
+} from 'quiz-room-core';
 import { readJSON, ensureDir, writeJSON } from 'fs-extra';
 
 export async function createRoom() {
   let messages: Message[] = [];
+  let room: QuizRoom;
 
   try {
-    const messagesProps: MessageProps[] = await readJSON('res/messages.json');
+    const roomProps: QuizRoomProps = await readJSON('.cache/room.json');
 
-    messages = messagesProps.map(Message.fromJSON);
+    room =
+      QuizRoom.fromJSON(roomProps) ||
+      new QuizRoom({
+        questions: mockQuestions,
+        SHOW_ANSWER_CORRECT_DELAY: 3000,
+        SHOW_NEXT_QUESTION_DELAY: 3000,
+        saveMessage: true,
+        onSaveMessage: saveMessage,
+        messages,
+      });
+
+    return room;
   } catch (e) {
     console.error(e);
-  }
 
-  const room = new QuizRoom({
-    questions: mockQuestions,
-    SHOW_ANSWER_CORRECT_DELAY: 3000,
-    SHOW_NEXT_QUESTION_DELAY: 3000,
-    saveMessage: true,
-    onSaveMessage: saveMessage,
-    messages,
-  });
+    throw e;
+  }
 
   async function saveMessage() {
-    await ensureDir('res');
-    await writeJSON(`res/messages.json`, messages);
+    await ensureDir('.cache');
+    await writeJSON(`.cache/messages.json`, messages);
+    await writeJSON(`.cache/room.json`, room);
   }
-
-  return room;
 }
