@@ -57,9 +57,11 @@ async function main() {
     }
 
     function notifyUsersChange() {
+      console.log('userLength', room.users);
+
       const message = new Message({
         type: MessageType.nofityUsersChange,
-        content: JSON.stringify(Object.values(room.users)),
+        content: JSON.stringify(Array.from(room.users)),
       });
 
       handleEmitMessage(message);

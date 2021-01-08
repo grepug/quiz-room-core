@@ -41,7 +41,6 @@ export class QuizRoom extends Room {
     const quizRoom = new QuizRoom(props.config);
 
     quizRoom.id = room.id;
-    quizRoom.users = room.users;
     quizRoom.config = props.config;
     quizRoom.correctAnswers = props.correctAnswers.map((el) =>
       Answer.fromJSON(el)

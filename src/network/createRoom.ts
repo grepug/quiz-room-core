@@ -13,23 +13,19 @@ export async function createRoom() {
   try {
     const roomProps: QuizRoomProps = await readJSON('.cache/room.json');
 
-    room =
-      QuizRoom.fromJSON(roomProps) ||
-      new QuizRoom({
-        questions: mockQuestions,
-        SHOW_ANSWER_CORRECT_DELAY: 3000,
-        SHOW_NEXT_QUESTION_DELAY: 3000,
-        saveMessage: true,
-        onSaveMessage: saveMessage,
-        messages,
-      });
-
-    return room;
+    room = QuizRoom.fromJSON(roomProps);
   } catch (e) {
-    console.error(e);
-
-    throw e;
+    room = new QuizRoom({
+      questions: mockQuestions,
+      SHOW_ANSWER_CORRECT_DELAY: 3000,
+      SHOW_NEXT_QUESTION_DELAY: 3000,
+      saveMessage: true,
+      onSaveMessage: saveMessage,
+      messages,
+    });
   }
+
+  return room;
 
   async function saveMessage() {
     await ensureDir('.cache');

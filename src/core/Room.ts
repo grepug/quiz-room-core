@@ -13,7 +13,6 @@ export interface RoomConfig {
 
 export interface RoomProps {
   id: string;
-  users: UserProps[];
   config: RoomConfig;
 }
 
@@ -23,11 +22,7 @@ export class Room {
 
   static fromJSON(props: RoomProps) {
     let room = new Room(props.config);
-
     room.id = props.id;
-    const users = props.users.map((el) => new User(el));
-
-    room.users = new Map(users.map((el) => [el.id, el]));
 
     return room;
   }
@@ -75,7 +70,6 @@ export class Room {
   protected toJSON(): RoomProps {
     return {
       id: this.id,
-      users: Array.from(this.users.values()),
       config: this.config,
     };
   }
