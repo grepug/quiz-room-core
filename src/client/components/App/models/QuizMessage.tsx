@@ -45,10 +45,19 @@ export class QuizMessage extends Message {
     const isSent = this.user?.id === me.id;
 
     let text: ReactNode = this.content;
+
     if (this.isSystem) {
-      text = <span style={{ color: 'blue' }}>{text}</span>;
+      text = (
+        <span style={{ color: 'blue' }}>
+          <WrapText text={text} />
+        </span>
+      );
     } else if (this.user?.isAdmin && !isSent) {
-      text = <span style={{ color: 'red' }}>{text}</span>;
+      text = (
+        <span style={{ color: 'red' }}>
+          <WrapText text={text} />
+        </span>
+      );
     }
 
     return {
@@ -69,4 +78,20 @@ export class QuizMessage extends Message {
   toJSON(): MessageProps {
     return super.toJSON();
   }
+}
+
+function WrapText(props: { text?: ReactNode }) {
+  if (typeof props.text !== 'string') {
+    return <>{props.text}</>;
+  }
+
+  const ps = props.text?.split('\n') ?? [];
+
+  return (
+    <>
+      {ps.map((el, i) => (
+        <div key={i}>{el}</div>
+      ))}
+    </>
+  );
 }

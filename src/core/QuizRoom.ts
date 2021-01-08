@@ -78,7 +78,11 @@ export class QuizRoom extends Room {
           // 当有人答对，延迟提示答案正确
           await this.sleepAndEnsureState(this.config.SHOW_ANSWER_CORRECT_DELAY);
           this.emitMessage(
-            sm.answerCorrectMsg(msg.user, this.curQuestionIndex)
+            sm.answerCorrectMsg(
+              msg.user,
+              answer.question?.answer.content ?? answer.content,
+              this.curQuestionIndex
+            )
           );
           this.state = QuizState.ongoing_loading_next;
           this.correctAnswers.push(answer);
@@ -157,7 +161,7 @@ export class QuizRoom extends Room {
     return Object.entries(result)
       .sort(([_, x], [__, y]) => y - x)
       .filter(([id]) => getName(id))
-      .map(([id, score]) => `${getName(id)}: ${score}`)
+      .map(([id, score], i) => `${i + 1}. ${getName(id)}: ${score}`)
       .join('\n');
   }
 

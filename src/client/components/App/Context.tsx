@@ -169,7 +169,7 @@ export const {
 );
 
 function getConnection() {
-  return new window.WebSocket('ws://localhost:5200/ws');
+  return new window.WebSocket('ws://quiz-room.nat300.top/ws');
 }
 
 function linkQuizMessages(messages: QuizMessage[]) {
