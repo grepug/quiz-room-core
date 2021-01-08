@@ -54,6 +54,8 @@ function useApp(_: {}) {
 
   useEffect(() => {
     if (ws) {
+      let didCancel = false;
+
       ws.onmessage = handleMessage;
 
       ws.onopen = () => {
@@ -73,16 +75,20 @@ function useApp(_: {}) {
       ws.onclose = (e) => {
         toast('You are offline, reconnecting...');
 
-        handleLogin();
+        if (!didCancel) {
+          handleLogin();
+        }
       };
 
       ws.onerror = (e) => {
         toast('cannot establish connection!');
 
-        ws.close();
+        // ws.close();
       };
 
       return () => {
+        didCancel = true;
+
         ws.onmessage = null;
         ws.onopen = null;
         ws.onclose = null;
@@ -120,7 +126,7 @@ function useApp(_: {}) {
     const rawData: string = event.data;
     const message = new QuizMessage(JSON.parse(rawData));
 
-    console.log('messsage', message, rawData);
+    console.log('messsage', message);
 
     switch (message.type) {
       case MessageType.init:
