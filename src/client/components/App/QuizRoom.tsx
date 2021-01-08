@@ -1,8 +1,8 @@
 import { Page, Navbar, Link, Messagebar, Messages } from 'framework7-react';
 import { useEffect, useRef, useState } from 'react';
 import { useContext, Provider } from './Context';
-import { f7 } from 'framework7-react';
 import { MessageList } from './MessageList';
+import { toast } from './toast';
 
 export default function () {
   return (
@@ -22,13 +22,7 @@ function MyPage() {
   function sendMessage() {
     if (!ctx.user) return;
     if (Date.now() - lastSendTime.current < 2000) {
-      f7.toast
-        .create({
-          text: 'too fast!',
-          position: 'center',
-          closeTimeout: 2000,
-        })
-        .open();
+      toast('too fast!');
 
       return;
     }

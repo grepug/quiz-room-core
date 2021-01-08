@@ -1,3 +1,23 @@
 import { f7 } from 'framework7-react';
+import { Toast } from 'framework7/types';
 
-export function toast() {}
+let toastInstances: Record<string, Toast.Toast> = {};
+
+export function toast(
+  text: string,
+  opts?: {
+    position?: 'top' | 'center' | 'bottom';
+    closeTimeout?: number;
+  }
+) {
+  const ins =
+    toastInstances[text] ??
+    f7.toast.create({
+      text,
+      ...opts,
+    });
+
+  toastInstances[text] = ins;
+
+  ins.open();
+}
