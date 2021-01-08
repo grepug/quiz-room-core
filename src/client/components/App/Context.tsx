@@ -61,52 +61,36 @@ function useApp(_: {}) {
       case MessageType.init:
         const messagesProps: MessageProps[] = JSON.parse(message.content!);
         const messages = messagesProps.map(Message.fromJSON);
-
         const quizMessages = messages.map((el) => new QuizMessage(el));
         linkQuizMessages(quizMessages);
-
         setMessages(quizMessages);
-        break;
+        return;
       case MessageType.nofityUsersChange:
         const usersProps: UserProps[] = JSON.parse(message.content ?? '[]');
         const users = usersProps.map((el) => new User(el));
         setUsers(users);
+        return;
+    }
 
-        break;
+    if (message.isSystem || message.type === MessageType.default) {
+      const isUserJoined = message.type === MessageType.userJoined;
+      const isMeJoined = isUserJoined && tmpUserId.current === message.user?.id;
 
-      case MessageType.default:
-      case MessageType.system:
-      case MessageType.userJoined:
-      case MessageType.useLeft:
-        const isUserLeft = message.type === MessageType.useLeft;
-        const isUserJoined = message.type === MessageType.userJoined;
-        const isMeJoined =
-          isUserJoined && tmpUserId.current === message.user?.id;
+      if (isMeJoined) {
+        setUser(message.user);
+        tmpUserId.current = undefined;
+      }
 
-        if (isMeJoined) {
-          setUser(message.user);
+      setMessages((msgs) => {
+        const lastMsg: QuizMessage | undefined = msgs[msgs.length - 1];
+        message.prevMessage = lastMsg;
 
-          break;
+        if (lastMsg) {
+          lastMsg.nextMessage = message;
         }
 
-        setMessages((msgs) => {
-          const lastMsg: QuizMessage | undefined = msgs[msgs.length - 1];
-          message.prevMessage = lastMsg;
-
-          if (lastMsg) {
-            lastMsg.nextMessage = message;
-          }
-
-          if (isUserJoined || isUserLeft) {
-            const text = isUserJoined ? 'joined' : 'left';
-
-            message.content = `${message.user?.name} ${text}`;
-            message.type = MessageType.system;
-          }
-
-          return msgs.concat(message);
-        });
-        break;
+        return msgs.concat(message);
+      });
     }
   }
 

@@ -35,7 +35,13 @@ export class Room {
 
     this.config.onUserLeave?.(userId);
 
-    this.emitMessage(new Message({ type: MessageType.useLeft, user }));
+    this.emitMessage(
+      new Message({
+        type: MessageType.userLeft,
+        user,
+        content: `${user.name} left`,
+      })
+    );
   }
 
   getInitMessage() {
@@ -69,7 +75,13 @@ export class Room {
 
     this.config.onUserJoin?.(user);
 
-    this.emitMessage(new Message({ type: MessageType.userJoined, user }));
+    this.emitMessage(
+      new Message({
+        type: MessageType.userJoined,
+        user,
+        content: `${user.name} joined`,
+      })
+    );
 
     return user;
   }

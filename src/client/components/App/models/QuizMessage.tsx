@@ -1,5 +1,5 @@
 import { Message, MessageType, MessageProps, User } from 'quiz-room-core';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 interface QuizMessageProps extends MessageProps {}
 
@@ -42,22 +42,14 @@ export class QuizMessage extends Message {
   }
 
   getRenderProps(me: User): MessageRenderProps {
-    const isSent = this.user?.id === me.id;
+    const isSent = this.user?.id === me.id && !this.isSystem;
 
     let text: ReactNode = this.content;
 
     if (this.isSystem) {
-      text = (
-        <span style={{ color: 'blue' }}>
-          <WrapText text={text} />
-        </span>
-      );
+      text = <WrapText color="blue" text={text} />;
     } else if (this.user?.isAdmin && !isSent) {
-      text = (
-        <span style={{ color: 'red' }}>
-          <WrapText text={text} />
-        </span>
-      );
+      text = <WrapText color="red" text={text} />;
     }
 
     return {
@@ -80,18 +72,20 @@ export class QuizMessage extends Message {
   }
 }
 
-function WrapText(props: { text?: ReactNode }) {
+function WrapText(props: { text?: ReactNode; color?: string }) {
+  const style: CSSProperties = { color: props.color };
+
   if (typeof props.text !== 'string') {
-    return <>{props.text}</>;
+    return <span style={style}>{props.text}</span>;
   }
 
   const ps = props.text?.split('\n') ?? [];
 
   return (
-    <>
+    <div style={style}>
       {ps.map((el, i) => (
         <div key={i}>{el}</div>
       ))}
-    </>
+    </div>
   );
 }

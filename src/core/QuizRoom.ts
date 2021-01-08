@@ -91,7 +91,6 @@ export class QuizRoom extends Room {
         } catch {}
       }
     } else if (this.state === QuizState.ongoing_loading_next) {
-      this.emitMessage(sm.loadingDontHurry());
     } else if (this.state === QuizState.completed) {
     }
   }

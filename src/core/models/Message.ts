@@ -7,7 +7,7 @@ export enum MessageType {
   default = 'default',
   system = 'system',
   userJoined = 'userJoined',
-  useLeft = 'userLeft',
+  userLeft = 'userLeft',
   init = 'init',
   nofityUsersChange = 'notifyUsersChange',
 }
@@ -53,7 +53,11 @@ export class Message implements MessageProps {
   }
 
   get isSystem() {
-    return this.type === MessageType.system;
+    return [
+      MessageType.system,
+      MessageType.userJoined,
+      MessageType.userLeft,
+    ].includes(this.type);
   }
 
   get shouldSave() {
