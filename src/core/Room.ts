@@ -37,7 +37,7 @@ export class Room {
 
     this.emitMessage(
       new Message({
-        type: MessageType.userLeft,
+        type: MessageType.sys_userLeft,
         user,
         content: `${user.name} left`,
       })
@@ -77,7 +77,7 @@ export class Room {
 
     this.emitMessage(
       new Message({
-        type: MessageType.userJoined,
+        type: MessageType.sys_userJoined,
         user,
         content: `${user.name} joined`,
       })

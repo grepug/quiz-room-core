@@ -14,6 +14,8 @@ export function toast(
     toastInstances[text] ??
     f7.toast.create({
       text,
+      position: 'center',
+      closeTimeout: 1500,
       ...opts,
     });
 

@@ -5,11 +5,11 @@ export enum MessageType {
   join = 'join',
   userJoin = 'userJoin',
   default = 'default',
-  system = 'system',
-  userJoined = 'userJoined',
-  userLeft = 'userLeft',
   init = 'init',
   nofityUsersChange = 'notifyUsersChange',
+  system = 'system',
+  sys_userJoined = 'sys_userJoined',
+  sys_userLeft = 'sys_userLeft',
 }
 
 export enum AdminMessageType {
@@ -53,15 +53,11 @@ export class Message implements MessageProps {
   }
 
   get isSystem() {
-    return [
-      MessageType.system,
-      MessageType.userJoined,
-      MessageType.userLeft,
-    ].includes(this.type);
+    return this.type.startsWith('sys');
   }
 
   get shouldSave() {
-    return [MessageType.default, MessageType.system].includes(this.type);
+    return this.isSystem || this.type === MessageType.default;
   }
 
   isEqual(message?: Message) {

@@ -16,7 +16,7 @@ function useWSTest(_: {}) {
     console.log('userJoined', message.user?.name);
 
     switch (message.type) {
-      case MessageType.userJoined:
+      case MessageType.sys_userJoined:
         if (tmpUserName.current === message.user?.name) {
           setUser(message.user);
         }

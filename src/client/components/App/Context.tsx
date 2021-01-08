@@ -73,7 +73,7 @@ function useApp(_: {}) {
     }
 
     if (message.isSystem || message.type === MessageType.default) {
-      const isUserJoined = message.type === MessageType.userJoined;
+      const isUserJoined = message.type === MessageType.sys_userJoined;
       const isMeJoined = isUserJoined && tmpUserId.current === message.user?.id;
 
       if (isMeJoined) {
