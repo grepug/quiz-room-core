@@ -10,12 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "socket.io": "^3.0.4",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "fs-extra": "^9.0.1"
   },
   "devDependencies": {
     "ts-node": "^9.1.1",
     "@types/node": "^14.14.19",
     "@types/express": "^4.17.9",
-    "@types/ws": "^7.4.0"
+    "@types/ws": "^7.4.0",
+    "@types/fs-extra": "^9.0.6"
   }
 }

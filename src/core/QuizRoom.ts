@@ -1,8 +1,8 @@
 import { sleep } from 'quiz-room-utils';
-import { Answer } from './models/Answer';
+import { Answer, AnswerProps } from './models/Answer';
 import { AdminMessageType, Message } from './models/Message';
 import { Question } from './models/Question';
-import { Room, RoomConfig } from './Room';
+import { Room, RoomConfig, RoomProps } from './Room';
 import { systemMessage as sm } from './systemMessages';
 
 enum QuizState {
@@ -19,15 +19,23 @@ interface QuizRoomConfig extends RoomConfig {
   SHOW_NEXT_QUESTION_DELAY: number;
 }
 
-export class QuizRoom extends Room {
+interface QuizRoomProps extends RoomProps {
+  correctAnswers: AnswerProps[];
+  curQuestionIndex: number;
+  state: QuizState;
+}
+
+export class QuizRoom extends Room implements QuizRoomProps {
   correctAnswers: Answer[] = [];
 
-  private curQuestionIndex = 0;
-  private state = QuizState.preparing;
+  curQuestionIndex = 0;
+  state = QuizState.preparing;
 
   private get curQuestion() {
     return this.config.questions[this.curQuestionIndex];
   }
+
+  static fromJSON(props: QuizRoomProps) {}
 
   constructor(public config: QuizRoomConfig) {
     super(config);
@@ -38,6 +46,15 @@ export class QuizRoom extends Room {
     super.handleDefaultMessage(msg);
 
     this.handleAdminMessage(msg) || this.handleUserMessage(msg);
+  }
+
+  toJSON(): QuizRoomProps {
+    return {
+      ...super.toJSON(),
+      correctAnswers: this.correctAnswers,
+      curQuestionIndex: this.curQuestionIndex,
+      state: this.state,
+    };
   }
 
   private handleAdminMessage(msg: Message) {
@@ -146,7 +163,8 @@ export class QuizRoom extends Room {
   }
 
   private getResultString(): string {
-    const result: Record<string, number> = {};
+    let result: Record<string, number> = {};
+
     const correctAnswers = this.correctAnswers.filter(
       (el) => this.users[el.user?.id ?? '']
     );

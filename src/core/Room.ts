@@ -1,4 +1,4 @@
-import { User } from './models/User';
+import { User, UserProps } from './models/User';
 import { Message, MessageType } from './models/Message';
 import { uuid } from 'quiz-room-utils';
 
@@ -6,14 +6,19 @@ export interface RoomConfig {
   emitMessage?: (msg: Message) => void;
   onUserJoin?: (user: User) => void;
   onUserLeave?: (userId: string) => void;
+  onSaveMessage?: (message: Message) => void;
   saveMessage?: boolean;
+  messages?: Message[];
 }
 
-export class Room {
+export interface RoomProps {
+  id: string;
+  users: Record<string, UserProps>;
+}
+
+export class Room implements RoomProps {
   id = uuid();
   users: Record<string, User> = {};
-
-  private messages: Message[] = [];
 
   constructor(protected config: RoomConfig) {}
 
@@ -45,12 +50,19 @@ export class Room {
   }
 
   getInitMessage() {
-    if (!this.messages.length) return;
+    if (!this.config.messages?.length) return;
 
     return new Message({
       type: MessageType.init,
-      content: JSON.stringify(this.messages),
+      content: JSON.stringify(this.config?.messages ?? []),
     });
+  }
+
+  protected toJSON(): RoomProps {
+    return {
+      id: this.id,
+      users: this.users,
+    };
   }
 
   protected emitMessage(msg: Message) {
@@ -58,7 +70,8 @@ export class Room {
 
     if (this.config.saveMessage) {
       if (msg.shouldSave) {
-        this.messages.push(msg);
+        this.config.messages?.push(msg);
+        this.config.onSaveMessage?.(msg);
       }
     }
   }

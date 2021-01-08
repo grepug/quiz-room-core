@@ -2,7 +2,7 @@ import { uuid } from 'quiz-room-utils';
 import { Question } from './Question';
 import { User } from './User';
 
-interface AnswerProps {
+export interface AnswerProps {
   content: string;
   question?: Question;
   user?: User;
@@ -13,6 +13,19 @@ export class Answer implements AnswerProps {
   content: string;
   question?: Question;
   user?: User;
+
+  static fromJSON(props: AnswerProps, question?: Question) {
+    const answer = new Answer(props);
+
+    if (props.question) {
+      question = question || new Question(props.question);
+
+      answer.question = question;
+      question.answer = answer;
+    }
+
+    return answer;
+  }
 
   constructor(props: AnswerProps) {
     this.question = props.question;
