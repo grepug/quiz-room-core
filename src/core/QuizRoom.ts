@@ -87,6 +87,9 @@ export class QuizRoom extends Room {
       case AdminMessageType.stop:
         this.complete();
         break;
+      case AdminMessageType.score:
+        this.showScore();
+        break;
       default:
         return false;
     }
@@ -166,9 +169,15 @@ export class QuizRoom extends Room {
     if (this.state !== QuizState.ongoing_answering) return;
 
     this.state = QuizState.ongoing_loading_next;
-    this.emitMessage(sm.revealAnswerMsg(this.curQuestion));
+    this.emitMessage(
+      sm.revealAnswerMsg(this.curQuestion, this.curQuestionIndex)
+    );
 
     this.nextQuestion();
+  }
+
+  private showScore() {
+    this.emitMessage(sm.quizShowCurrentScore(this.getResultString()));
   }
 
   private complete() {

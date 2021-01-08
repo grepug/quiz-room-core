@@ -57,7 +57,7 @@ export class QuizMessage extends Message {
       name: this.isSystem
         ? 'System'
         : this.user?.isAdmin
-        ? `${this.user.name} (admin)`
+        ? `${this.user.name} (host)`
         : this.user?.name ?? '',
       type: !isSent ? 'received' : 'sent',
       image: this.imageURL,

@@ -126,7 +126,8 @@ function useApp(_: {}) {
     const rawData: string = event.data;
     const message = new QuizMessage(JSON.parse(rawData));
 
-    console.log('messsage', message);
+    // console.log('messsage', message);
+    console.log('users', users);
 
     switch (message.type) {
       case MessageType.init:

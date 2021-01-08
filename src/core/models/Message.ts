@@ -16,6 +16,7 @@ export enum AdminMessageType {
   start = 'start',
   show = 'show',
   stop = 'stop',
+  score = 'score',
 }
 
 export interface MessageProps {
