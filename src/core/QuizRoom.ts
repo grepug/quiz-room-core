@@ -36,6 +36,10 @@ export class QuizRoom extends Room {
     return this.config.questions[this.curQuestionIndex];
   }
 
+  private get isLast() {
+    return this.curQuestionIndex === this.config.questions.length - 1;
+  }
+
   static fromJSON(props: QuizRoomProps) {
     const room = Room.fromJSON(props);
     const quizRoom = new QuizRoom(props.config);
@@ -112,6 +116,8 @@ export class QuizRoom extends Room {
           this.state = QuizState.ongoing_correctly_answered;
           // 当有人答对，延迟提示答案正确
           await this.sleepAndEnsureState(this.config.SHOW_ANSWER_CORRECT_DELAY);
+          this.state = QuizState.ongoing_loading_next;
+
           this.emitMessage(
             sm.answerCorrectMsg(
               msg.user,
@@ -119,7 +125,11 @@ export class QuizRoom extends Room {
               this.curQuestionIndex
             )
           );
-          this.state = QuizState.ongoing_loading_next;
+
+          if (this.curQuestionIndex % 5 === 0 && !this.isLast) {
+            this.emitMessage(sm.quizShowCurrentScore(this.getResultString()));
+          }
+
           this.correctAnswers.push(answer);
           await this.sleepAndEnsureState(500);
           await this.nextQuestion();

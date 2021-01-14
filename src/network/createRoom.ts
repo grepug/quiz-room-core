@@ -18,7 +18,7 @@ export async function createRoom() {
     room = new QuizRoom({
       questions: mockQuestions,
       SHOW_ANSWER_CORRECT_DELAY: 3000,
-      SHOW_NEXT_QUESTION_DELAY: 3000,
+      SHOW_NEXT_QUESTION_DELAY: 5000,
       saveMessage: true,
       onSaveMessage: saveMessage,
       messages,
@@ -29,7 +29,6 @@ export async function createRoom() {
 
   async function saveMessage() {
     await ensureDir('.cache');
-    await writeJSON(`.cache/messages.json`, messages);
     await writeJSON(`.cache/room.json`, room);
   }
 }

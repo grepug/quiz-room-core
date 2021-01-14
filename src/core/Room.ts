@@ -61,9 +61,11 @@ export class Room {
   getInitMessage() {
     if (!this.config.messages?.length) return;
 
+    const messages = this.config.messages.slice(-30) ?? [];
+
     return new Message({
       type: MessageType.init,
-      content: JSON.stringify(this.config?.messages ?? []),
+      content: JSON.stringify(messages),
     });
   }
 

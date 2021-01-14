@@ -16,6 +16,7 @@
     "outDir": "./dist",
     "strictNullChecks": true,
     "inlineSourceMap": true,
+    "noImplicitAny": true,
     "paths": {
       "utils/*": ["../utils/*"]
     }
