@@ -12,10 +12,11 @@ export default function () {
   );
 }
 
+const textArea = () =>
+  document.querySelector<HTMLTextAreaElement>('.messagebar-area textarea')!;
+
 function MyPage() {
   const ctx = useContext()!;
-  const [inputValue, setInputValue] = useState('');
-  const inputValueRef = useRef('');
 
   const lastSendTime = useRef(0);
 
@@ -27,23 +28,20 @@ function MyPage() {
       return;
     }
 
-    const value = inputValueRef.current.trim();
+    const value = textArea().value;
 
     if (value) {
       ctx.sendMessage(value);
       lastSendTime.current = Date.now();
 
-      setInputValue('');
+      textArea().value = '';
     }
   }
 
   useEffect(() => {
-    const el = document.querySelector<HTMLTextAreaElement>(
-      '#message-bar textarea'
-    );
+    const el = textArea();
 
     if (el) {
-      // el.type
       el.onkeypress = (e) => {
         if (e.key === 'Enter') {
           sendMessage();
@@ -57,18 +55,12 @@ function MyPage() {
     }
   }, [ctx.user]);
 
-  useEffect(() => {
-    inputValueRef.current = inputValue;
-  }, [inputValue]);
-
   return (
     <Page>
       <Navbar title={`Quiz Room (${ctx.users.length} online)`} />
       <Messagebar
         placeholder="Your Answer"
-        value={inputValue}
         sheetVisible={false}
-        onInput={(e) => setInputValue(e.target.value)}
         id="message-bar"
       >
         <Link slot="inner-end" onClick={sendMessage}>
