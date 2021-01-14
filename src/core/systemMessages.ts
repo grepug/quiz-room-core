@@ -12,7 +12,7 @@ export const systemMessage = {
     createSystemMessage(`Q${index + 1}: ${question.title}`),
   revealAnswerMsg: (question: Question, index: number) =>
     createSystemMessage(
-      `Q${index + 1}\nThe answer is${question.answer.content}`
+      `Q${index + 1}\nThe answer is ${question.answer.content}`
     ),
   answerCorrectMsg: (user: User, answer: string, index: number) =>
     createSystemMessage(

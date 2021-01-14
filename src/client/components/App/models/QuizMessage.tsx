@@ -52,13 +52,19 @@ export class QuizMessage extends Message {
       text = <WrapText color="red" text={text} />;
     }
 
+    let name = this.isSystem
+      ? 'System'
+      : this.user?.isAdmin
+      ? `${this.user.name} (host)`
+      : this.user?.name ?? '';
+
+    const date = new Date(this.createdAt);
+
+    name += `  (${date.getHours()}:${date.getMinutes()})`;
+
     return {
       text,
-      name: this.isSystem
-        ? 'System'
-        : this.user?.isAdmin
-        ? `${this.user.name} (host)`
-        : this.user?.name ?? '',
+      name,
       type: !isSent ? 'received' : 'sent',
       image: this.imageURL,
       first: this.isFirst,

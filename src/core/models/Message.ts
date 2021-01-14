@@ -33,6 +33,7 @@ export class Message implements MessageProps {
   content?: string;
   user?: User;
   imageURL?: string;
+  createdAt = new Date().toISOString();
 
   static fromJSON({ user, ...props }: MessageProps): Message {
     let message = new Message(props);

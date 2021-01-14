@@ -20,3 +20,26 @@ export function convertCSVToQuestions(csvString: string): Question[] {
       return question;
     });
 }
+
+export function converJSONToQuestions(
+  json: {
+    题目: string;
+    答案: string;
+  }[]
+): Question[] {
+  return json.map((el) => {
+    const [title, answerContent] = [el.题目, el.答案];
+
+    const answer = new Answer({ content: answerContent });
+
+    const question = new Question({
+      title,
+      answer,
+      score: 1,
+    });
+
+    question.answer = answer;
+
+    return question;
+  });
+}

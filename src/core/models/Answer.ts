@@ -13,6 +13,7 @@ export class Answer implements AnswerProps {
   content: string;
   question?: Question;
   user?: User;
+  createdAt = new Date().toISOString();
 
   static fromJSON(props: AnswerProps, question?: Question) {
     const answer = new Answer(props);
